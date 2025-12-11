@@ -4,7 +4,10 @@ import { login, logout } from '../redux/slices/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+import FloatingBackground from '../components/FloatingBackground';
+
 const Login = () => {
+    // ... existing state and logic ...
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -33,12 +36,13 @@ const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50 animate-gradient relative overflow-hidden">
+            <FloatingBackground />
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-md p-6 md:p-8 bg-white rounded shadow-md"
+                className="w-full max-w-md p-6 md:p-8 bg-white/80 backdrop-blur-sm rounded shadow-md z-10"
             >
                 <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Login</h2>
                 {error && <div className="p-3 mb-4 text-red-700 bg-red-100 rounded">{error}</div>}

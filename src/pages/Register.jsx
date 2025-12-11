@@ -4,7 +4,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
+import FloatingBackground from '../components/FloatingBackground';
+
 const Register = () => {
+    // ... existing state ...
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -43,11 +46,12 @@ const Register = () => {
 
     if (success) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 animate-gradient relative overflow-hidden">
+                <FloatingBackground />
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="w-full max-w-md p-8 bg-white rounded-2xl shadow-2xl text-center"
+                    className="w-full max-w-md p-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl text-center z-10"
                 >
                     <div className="mb-4">
                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
@@ -69,12 +73,13 @@ const Register = () => {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 animate-gradient relative overflow-hidden">
+            <FloatingBackground />
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-md p-6 md:p-8 bg-white rounded-2xl shadow-2xl"
+                className="w-full max-w-md p-6 md:p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl z-10"
             >
                 <h2 className="mb-6 text-3xl font-extrabold text-center text-gray-800">Create Account</h2>
                 <p className="text-center text-gray-600 mb-6 text-sm">
