@@ -1,0 +1,296 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaUserGraduate, FaChalkboardTeacher, FaUserShield, FaEdit, FaTrash } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+
+const ManageUsers = () => {
+    const [users, setUsers] = useState([]);
+    const [classes, setClasses] = useState([]);
+    const [subjects, setSubjects] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterRole, setFilterRole] = useState('All');
+
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+
+    // Edit form states
+    const [editRole, setEditRole] = useState('');
+    const [editClass, setEditClass] = useState('');
+    const [editRollNumber, setEditRollNumber] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetchUsers();
+        fetchClasses();
+        fetchSubjects();
+    }, []);
+
+    const fetchUsers = async () => {
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const { data } = await axios.get('http://localhost:5000/api/approvals/users', {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`
+                }
+            });
+            setUsers(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchClasses = async () => {
+        try {
+            const { data } = await axios.get('http://localhost:5000/api/classes');
+            setClasses(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchSubjects = async () => {
+        try {
+            const { data } = await axios.get('http://localhost:5000/api/subjects');
+            setSubjects(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const openEditModal = (user) => {
+        setSelectedUser(user);
+        setEditRole(user.role || 'Student');
+        setEditClass(user.studentClass?._id || '');
+        setEditRollNumber(user.rollNumber || '');
+        setShowModal(true);
+    };
+
+    const handleUpdate = async () => {
+        if (!selectedUser) return;
+
+        setLoading(true);
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            await axios.put(`http://localhost:5000/api/approvals/${selectedUser._id}/update`, {
+                role: editRole,
+                studentClass: editRole === 'Student' ? editClass : null,
+                rollNumber: editRole === 'Student' ? editRollNumber : null
+            }, {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`
+                }
+            });
+
+            toast.success('User updated successfully!');
+            setShowModal(false);
+            fetchUsers();
+            setLoading(false);
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.message || 'Error updating user');
+            setLoading(false);
+        }
+    };
+
+    const filteredUsers = users.filter(user => {
+        const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesRole = filterRole === 'All' || user.role === filterRole;
+        return matchesSearch && matchesRole;
+    });
+
+    return (
+        <div className="bg-gray-50 min-h-screen">
+            <div className="mb-6">
+                <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight">
+                    Manage <span className="text-blue-600">Users</span>
+                </h1>
+                <p className="text-gray-500 mt-2">Edit user details, assign classes and roles</p>
+            </div>
+
+            {/* Filters */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Search by name or email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                    </div>
+                    <div>
+                        <select
+                            value={filterRole}
+                            onChange={(e) => setFilterRole(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        >
+                            <option value="All">All Roles</option>
+                            <option value="Student">Students</option>
+                            <option value="Teacher">Teachers</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {/* Users Table */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-blue-50">
+                            <tr>
+                                <th className="py-3 px-4 text-left text-xs font-bold text-blue-800 uppercase">Name</th>
+                                <th className="py-3 px-4 text-left text-xs font-bold text-blue-800 uppercase">Email</th>
+                                <th className="py-3 px-4 text-left text-xs font-bold text-blue-800 uppercase">Role</th>
+                                <th className="py-3 px-4 text-left text-xs font-bold text-blue-800 uppercase">Class</th>
+                                <th className="py-3 px-4 text-left text-xs font-bold text-blue-800 uppercase">Roll No</th>
+                                <th className="py-3 px-4 text-center text-xs font-bold text-blue-800 uppercase">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {filteredUsers.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" className="py-12 text-center text-gray-400">
+                                        No users found
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredUsers.map((user) => (
+                                    <tr key={user._id} className="hover:bg-blue-50/50 transition-colors">
+                                        <td className="py-3 px-4">
+                                            <div className="flex items-center">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${user.role === 'Student' ? 'bg-blue-100' : 'bg-green-100'
+                                                    }`}>
+                                                    {user.role === 'Student' ?
+                                                        <FaUserGraduate className="text-blue-600" /> :
+                                                        <FaChalkboardTeacher className="text-green-600" />
+                                                    }
+                                                </div>
+                                                <span className="font-semibold text-gray-800">{user.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-3 px-4 text-gray-600">{user.email}</td>
+                                        <td className="py-3 px-4">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${user.role === 'Student' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                                                }`}>
+                                                {user.role || 'Not Assigned'}
+                                            </span>
+                                        </td>
+                                        <td className="py-3 px-4 text-gray-600">
+                                            {user.studentClass ?
+                                                `${user.studentClass.name} - ${user.studentClass.section}` :
+                                                <span className="text-orange-500 italic">Unassigned</span>
+                                            }
+                                        </td>
+                                        <td className="py-3 px-4 text-gray-600">
+                                            {user.rollNumber || <span className="text-gray-400 italic">-</span>}
+                                        </td>
+                                        <td className="py-3 px-4 text-center">
+                                            <button
+                                                onClick={() => openEditModal(user)}
+                                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2 font-semibold text-sm"
+                                            >
+                                                <FaEdit /> Edit
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Edit Modal */}
+            <AnimatePresence>
+                {showModal && selectedUser && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+                        onClick={() => setShowModal(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Edit User Details</h2>
+                            <p className="text-gray-600 mb-6">
+                                Editing: <span className="font-semibold">{selectedUser.name}</span>
+                            </p>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Role</label>
+                                    <select
+                                        value={editRole}
+                                        onChange={(e) => setEditRole(e.target.value)}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    >
+                                        <option value="Student">Student</option>
+                                        <option value="Teacher">Teacher</option>
+                                    </select>
+                                </div>
+
+                                {editRole === 'Student' && (
+                                    <>
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Assign Class</label>
+                                            <select
+                                                value={editClass}
+                                                onChange={(e) => setEditClass(e.target.value)}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                            >
+                                                <option value="">Select Class</option>
+                                                {classes.map((cls) => (
+                                                    <option key={cls._id} value={cls._id}>
+                                                        {cls.name} - {cls.section}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Roll Number</label>
+                                            <input
+                                                type="text"
+                                                value={editRollNumber}
+                                                onChange={(e) => setEditRollNumber(e.target.value)}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                                placeholder="e.g. 101"
+                                            />
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    onClick={handleUpdate}
+                                    className="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Updating...' : 'Update User'}
+                                </button>
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-300 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
+export default ManageUsers;
