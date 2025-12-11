@@ -21,26 +21,21 @@ const StudyMaterials = () => {
     const fetchData = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            // Fetch student's subjects first
-            const subjectsRes = await axios.get(`${import.meta.env.VITE_API_URL}/student/subjects`, {
-                headers: { Authorization: `Bearer ${userInfo.token}` }
-            }).catch(() => ({ data: [] })); // Fallback if route fails
-
-            // Fetch materials (we might need a student-specific route or filter by class in frontend if backend returns all)
-            // Ideally backend should filter by student's class.
-            // Let's assume getMaterials filters by classId if provided, or we can fetch student class first.
-
-            // Getting student profile to find classId
+            // First fetch student profile to get classId
             const studentProfile = await axios.get(`${import.meta.env.VITE_API_URL}/students/${userInfo._id}`);
             const classId = studentProfile.data.studentClass?._id;
 
             if (classId) {
-                const materialsRes = await axios.get(`${import.meta.env.VITE_API_URL}/materials?classId=${classId}`);
+                // Fetch materials for this class
+                const materialsRes = await axios.get(`${import.meta.env.VITE_API_URL}/materials?classId=${classId}`, {
+                    headers: { Authorization: `Bearer ${userInfo.token}` }
+                });
                 setMaterials(materialsRes.data);
 
-                // Extract unique subjects from materials or use enrolled subjects
-                // Using enrolled subjects is better
-                const enrolledSubjects = await axios.get(`${import.meta.env.VITE_API_URL}/subjects?classId=${classId}`);
+                // Fetch subjects for this class to populate filters
+                const enrolledSubjects = await axios.get(`${import.meta.env.VITE_API_URL}/subjects?classId=${classId}`, {
+                    headers: { Authorization: `Bearer ${userInfo.token}` }
+                });
                 setSubjects(enrolledSubjects.data);
             }
             setLoading(false);

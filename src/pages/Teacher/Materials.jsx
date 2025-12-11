@@ -234,38 +234,38 @@ const Materials = () => {
                                         animate={{ opacity: 1 }}
                                         className="border border-gray-100 rounded-xl p-4 hover:shadow-md transition-shadow bg-gray-50"
                                     >
-                                        <div className="flex items-start justify-between">
-                                            <div className="flex items-start space-x-4">
-                                                <div className="p-3 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                        <div className="flex flex-col sm:flex-row gap-4 justify-between items-start">
+                                            <div className="flex gap-4 items-start w-full">
+                                                <div className="p-3 bg-white rounded-lg border border-gray-200 shadow-sm shrink-0">
                                                     {getIcon(material.type)}
                                                 </div>
-                                                <div>
-                                                    <h3 className="font-bold text-gray-800 text-lg">{material.title}</h3>
-                                                    <p className="text-sm text-gray-600 mt-1">{material.description}</p>
-                                                    <div className="flex items-center gap-4 mt-3">
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-bold text-gray-800 text-lg break-words">{material.title}</h3>
+                                                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{material.description}</p>
+                                                    <div className="flex flex-wrap items-center gap-2 mt-3">
                                                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium">
                                                             {material.type}
                                                         </span>
-                                                        <span className="text-xs text-gray-400">
+                                                        <span className="text-xs text-gray-400 flex items-center gap-1">
                                                             {new Date(material.createdAt).toLocaleDateString()}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="flex space-x-2">
+                                            <div className="flex gap-2 self-end sm:self-start shrink-0">
                                                 <a
                                                     href={material.link}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-100"
                                                     title="Open Link"
                                                 >
                                                     <FaExternalLinkAlt />
                                                 </a>
                                                 <button
                                                     onClick={() => handleDelete(material._id)}
-                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
                                                     title="Delete"
                                                 >
                                                     <FaTrash />
