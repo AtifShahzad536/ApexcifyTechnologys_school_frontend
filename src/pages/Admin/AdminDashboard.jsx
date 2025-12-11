@@ -48,40 +48,40 @@ const AdminDashboard = () => {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
             const headers = userInfo?.token ? { Authorization: `Bearer ${userInfo.token}` } : {};
 
-            const [studentsRes, teachersRes, classesRes, subjectsRes, approvalsRes, allUsersRes] = await Promise.all([
-                axios.get(`${import.meta.env.VITE_API_URL}/dashboard/stats`),
+            const [studentsRes, teachersRes, classesRes, subjectsRes, approvalsRes, parentsRes] = await Promise.all([
+                axios.get(`${import.meta.env.VITE_API_URL}/students`),
                 axios.get(`${import.meta.env.VITE_API_URL}/teachers`),
                 axios.get(`${import.meta.env.VITE_API_URL}/classes`),
                 axios.get(`${import.meta.env.VITE_API_URL}/subjects`),
                 axios.get(`${import.meta.env.VITE_API_URL}/approvals/pending`, { headers }).catch(() => ({ data: [] })),
-                axios.get(`${import.meta.env.VITE_API_URL}/students`).catch(() => ({ data: [] }))
+                axios.get(`${import.meta.env.VITE_API_URL}/parents`).catch(() => ({ data: [] }))
             ]);
 
-            // Get class distribution
-            const classes = classesRes.data;
             const students = studentsRes.data;
+            const teachers = teachersRes.data;
+            const classes = classesRes.data;
+            const subjects = subjectsRes.data;
+            const pendingApprovals = approvalsRes.data;
+            const parents = parentsRes.data;
 
+            setStats({
+                students: students.length,
+                teachers: teachers.length,
+                classes: classes.length,
+                subjects: subjects.length,
+                pendingApprovals: pendingApprovals.length
+            });
+
+            // Calculate Class Distribution
             const classDistribution = classes.map(cls => ({
                 name: `${cls.name} - ${cls.section}`,
                 count: students.filter(s => s.studentClass?._id === cls._id).length
             }));
-
-            // Count users by role
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/dashboard/recent-activity`);
-            const teachers = teachersRes.data;
-            const parents = allUsersRes.data.filter(u => u.role === 'Parent');
-
-            setStats({
-                students: studentsRes.data.length,
-                teachers: teachersRes.data.length,
-                classes: classesRes.data.length,
-                subjects: subjectsRes.data.length,
-                pendingApprovals: approvalsRes.data.length || 0
-            });
-
             setClassData(classDistribution);
+
+            // Calculate Role Distribution
             setRoleData({
-                students: studentsRes.data.length,
+                students: students.length,
                 teachers: teachers.length,
                 parents: parents.length
             });

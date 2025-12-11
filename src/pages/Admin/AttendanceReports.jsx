@@ -19,7 +19,7 @@ const AttendanceReports = () => {
 
     const fetchClasses = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/classes');
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/classes`);
             setClasses(data);
         } catch (error) {
             console.error(error);
@@ -36,7 +36,7 @@ const AttendanceReports = () => {
             if (endDate) params.append('endDate', endDate);
 
             const { data } = await axios.get(
-                `http://localhost:5000/api/attendance/reports/all-students?${params.toString()}`,
+                `${import.meta.env.VITE_API_URL}/attendance/reports/all-students?${params.toString()}`,
                 {
                     headers: {
                         Authorization: `Bearer ${userInfo.token}`

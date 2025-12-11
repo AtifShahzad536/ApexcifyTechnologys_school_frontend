@@ -10,11 +10,10 @@ const LeaveRequests = () => {
     const fetchPendingLeaves = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/leaves/admin/all`, {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/leaves/pending`, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
-            const pendingLeaves = data.filter(leave => leave.status === 'Pending');
-            setLeaves(pendingLeaves);
+            setLeaves(data);
         } catch (error) {
             console.error(error);
             toast.error('Error fetching leaves');
