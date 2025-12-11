@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUserGraduate, FaChalkboardTeacher, FaUserShield, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaUserGraduate, FaChalkboardTeacher, FaUserShield, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const ManageUsers = () => {

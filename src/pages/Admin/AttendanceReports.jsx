@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaFileAlt, FaSearch, FaDownload } from 'react-icons/fa';
+import { FaFileAlt, FaSearch, FaDownload, FaFilter, FaChartBar, FaFileDownload } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { Bar } from 'react-chartjs-2';
 

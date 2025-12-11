@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaPlus, FaEdit, FaTrash, FaBook } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
@@ -16,8 +17,9 @@ const Subjects = () => {
     const [description, setDescription] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    // Removed local error state
 
+    // ... fetch functions ...
     const fetchSubjects = async () => {
         try {
             const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/subjects`);
@@ -54,7 +56,6 @@ const Subjects = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
 
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/subjects`, {
@@ -67,6 +68,7 @@ const Subjects = () => {
             });
 
             setLoading(false);
+            toast.success('Subject added successfully');
             setName('');
             setCode('');
             setSelectedClass('');
@@ -75,7 +77,8 @@ const Subjects = () => {
             setDescription('');
             fetchSubjects();
         } catch (err) {
-            setError(err.response?.data?.message || err.message);
+            const message = err.response?.data?.message || err.message;
+            toast.error(message);
             setLoading(false);
         }
     };
@@ -84,9 +87,11 @@ const Subjects = () => {
         if (window.confirm('Are you sure you want to delete this subject?')) {
             try {
                 await axios.delete(`${import.meta.env.VITE_API_URL}/subjects/${id}`);
+                toast.success('Subject deleted successfully');
                 fetchSubjects();
             } catch (error) {
                 console.error(error);
+                toast.error('Error deleting subject');
             }
         }
     };
@@ -113,12 +118,6 @@ const Subjects = () => {
                         <FaPlus className="mr-3 text-blue-500 bg-blue-50 p-2 rounded-full text-3xl" />
                         Add New Subject
                     </h2>
-
-                    {error && (
-                        <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm border border-red-100 flex items-center">
-                            <span className="mr-2">⚠️</span> {error}
-                        </div>
-                    )}
 
                     <form onSubmit={submitHandler} className="space-y-4">
                         <div>

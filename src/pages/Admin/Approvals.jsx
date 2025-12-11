@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheck, FaTimes, FaClock, FaUser } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaClock, FaUser, FaUserClock } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const Approvals = () => {
@@ -28,9 +28,9 @@ const Approvals = () => {
     const fetchPendingUsers = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL} /approvals/pending`, {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/approvals/pending`, {
                 headers: {
-                    Authorization: `Bearer ${userInfo.token} `
+                    Authorization: `Bearer ${userInfo.token}`
                 }
             });
             setPendingUsers(data);
@@ -51,9 +51,9 @@ const Approvals = () => {
     const fetchStudents = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const { data } = await axios.get('http://localhost:5000/api/approvals/users', {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/approvals/users`, {
                 headers: {
-                    Authorization: `Bearer ${userInfo.token} `
+                    Authorization: `Bearer ${userInfo.token}`
                 }
             });
             // Filter only students

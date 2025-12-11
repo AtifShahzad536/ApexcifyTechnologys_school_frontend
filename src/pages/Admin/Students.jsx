@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const Students = () => {
     const [students, setStudents] = useState([]);
@@ -15,7 +16,7 @@ const Students = () => {
     const [rollNumber, setRollNumber] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    // Removed local error state
 
     const fetchStudents = async () => {
         try {
@@ -28,7 +29,7 @@ const Students = () => {
 
     const fetchClasses = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/classes');
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/classes`);
             setClasses(data);
         } catch (error) {
             console.error(error);
@@ -47,16 +48,18 @@ const Students = () => {
             const config = {
                 headers: { 'Content-Type': 'application/json' },
             };
-            await axios.post('http://localhost:5000/api/students', {
+            await axios.post(`${import.meta.env.VITE_API_URL}/students`, {
                 name, email, password, studentClass: selectedClass, rollNumber
             }, config);
 
             setLoading(false);
+            toast.success('Student added successfully');
             // Reset Form
             setName(''); setEmail(''); setPassword(''); setSelectedClass(''); setRollNumber('');
             fetchStudents(); // Refresh list
         } catch (err) {
-            setError(err.response?.data?.message || err.message);
+            const message = err.response?.data?.message || err.message;
+            toast.error(message);
             setLoading(false);
         }
     };
@@ -83,11 +86,7 @@ const Students = () => {
                         <FaPlus className="mr-3 text-blue-500 bg-blue-50 p-2 rounded-full text-3xl" />
                         Add New Student
                     </h2>
-                    {error && (
-                        <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm border border-red-100 flex items-center">
-                            <span className="mr-2">⚠️</span> {error}
-                        </div>
-                    )}
+
                     <form onSubmit={submitHandler} className="space-y-4">
                         <div>
                             <label className="block text-sm font-semibold text-gray-600 mb-1">Full Name</label>

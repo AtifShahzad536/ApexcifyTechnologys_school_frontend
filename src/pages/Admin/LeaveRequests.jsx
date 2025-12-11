@@ -2,24 +2,28 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaCheck, FaTimes, FaClock } from 'react-icons/fa';
 
+import toast from 'react-hot-toast';
+
 const LeaveRequests = () => {
     const [leaves, setLeaves] = useState([]);
-
-    useEffect(() => {
-        fetchPendingLeaves();
-    }, []);
 
     const fetchPendingLeaves = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/leaves/pending`, {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/leaves/admin/all`, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
-            setLeaves(data);
+            const pendingLeaves = data.filter(leave => leave.status === 'Pending');
+            setLeaves(pendingLeaves);
         } catch (error) {
             console.error(error);
+            toast.error('Error fetching leaves');
         }
     };
+
+    useEffect(() => {
+        fetchPendingLeaves();
+    }, []);
 
     const handleAction = async (id, status) => {
         if (!window.confirm(`Are you sure you want to ${status} this leave?`)) return;
@@ -30,9 +34,11 @@ const LeaveRequests = () => {
                 { status },
                 { headers: { Authorization: `Bearer ${userInfo.token}` } }
             );
+            toast.success(`Leave ${status} successfully`);
             fetchPendingLeaves();
         } catch (error) {
             console.error(error);
+            toast.error('Error updating leave status');
         }
     };
 

@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const Classes = () => {
     const [classes, setClasses] = useState([]);
     const [name, setName] = useState('');
     const [section, setSection] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     const fetchClasses = async () => {
         try {
@@ -16,6 +16,7 @@ const Classes = () => {
             setClasses(data);
         } catch (error) {
             console.error(error);
+            toast.error('Error fetching classes');
         }
     };
 
@@ -34,12 +35,15 @@ const Classes = () => {
             setLoading(false);
             setName('');
             setSection('');
+            toast.success('Class added successfully');
             fetchClasses(); // Refresh list
         } catch (err) {
-            setError(err.response?.data?.message || err.message);
+            const message = err.response?.data?.message || err.message;
+            toast.error(message);
             setLoading(false);
         }
     };
+
 
     return (
         <div>
@@ -55,7 +59,7 @@ const Classes = () => {
                     <h2 className="text-xl font-bold mb-4 flex items-center">
                         <FaPlus className="mr-2 text-blue-500" /> Add New Class
                     </h2>
-                    {error && <div className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>}
+
                     <form onSubmit={submitHandler}>
                         <div className="mb-4">
                             <label className="block text-gray-700 mb-2">Class Name</label>
