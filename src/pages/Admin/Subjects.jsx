@@ -215,7 +215,7 @@ const Subjects = () => {
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-white rounded-2xl shadow-xl border border-gray-100 lg:col-span-2 overflow-hidden flex flex-col h-[700px]"
+                    className="bg-white rounded-2xl shadow-xl border border-gray-100 lg:col-span-2 overflow-hidden flex flex-col h-[500px] md:h-[700px]"
                 >
                     <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">

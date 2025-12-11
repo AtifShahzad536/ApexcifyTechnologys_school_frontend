@@ -163,41 +163,67 @@ const Teachers = () => {
                                 <p className="text-gray-400 text-sm">Add a new teacher to get started.</p>
                             </div>
                         ) : (
-                            <table className="min-w-full">
-                                <thead className="bg-blue-50 rounded-lg text-blue-800">
-                                    <tr>
-                                        <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider rounded-l-lg">Name</th>
-                                        <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Contact</th>
-                                        <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Qualification</th>
-                                        <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider rounded-r-lg">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
+                            <>
+                                {/* Mobile View - Cards */}
+                                <div className="md:hidden space-y-4">
                                     {teachers.map((teacher) => (
-                                        <tr key={teacher._id} className="hover:bg-blue-50/50 transition-colors group">
-                                            <td className="py-4 px-4">
-                                                <div className="font-semibold text-gray-800">{teacher.name}</div>
-                                            </td>
-                                            <td className="py-4 px-4 text-sm text-gray-500">
-                                                <div className="flex flex-col">
-                                                    <span>{teacher.email}</span>
-                                                    <span className="text-xs text-gray-400">{teacher.phone}</span>
+                                        <div key={teacher._id} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                            <div className="flex justify-between items-start mb-3">
+                                                <div>
+                                                    <h3 className="font-bold text-gray-800">{teacher.name}</h3>
+                                                    <p className="text-xs text-gray-500 break-all">{teacher.email}</p>
                                                 </div>
-                                            </td>
-                                            <td className="py-4 px-4 text-sm text-gray-600">
-                                                <span className="bg-gray-100 px-2 py-1 rounded text-xs font-medium">
+                                                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-xs font-bold whitespace-nowrap">
                                                     {teacher.qualification || 'N/A'}
                                                 </span>
-                                            </td>
-                                            <td className="py-4 px-4 text-right">
-                                                <button className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50">
-                                                    <FaTrash />
-                                                </button>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                            <div className="bg-white p-2 rounded text-sm text-gray-600 mb-3">
+                                                Phone: <span className="font-semibold">{teacher.phone || '-'}</span>
+                                            </div>
+                                            <button className="w-full text-red-500 bg-white border border-red-100 font-semibold py-2 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+                                                <FaTrash /> Remove
+                                            </button>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
+                                </div>
+
+                                {/* Desktop View - Table */}
+                                <table className="min-w-full hidden md:table">
+                                    <thead className="bg-blue-50 rounded-lg text-blue-800">
+                                        <tr>
+                                            <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider rounded-l-lg">Name</th>
+                                            <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Contact</th>
+                                            <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Qualification</th>
+                                            <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider rounded-r-lg">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {teachers.map((teacher) => (
+                                            <tr key={teacher._id} className="hover:bg-blue-50/50 transition-colors group">
+                                                <td className="py-4 px-4">
+                                                    <div className="font-semibold text-gray-800">{teacher.name}</div>
+                                                </td>
+                                                <td className="py-4 px-4 text-sm text-gray-500">
+                                                    <div className="flex flex-col">
+                                                        <span>{teacher.email}</span>
+                                                        <span className="text-xs text-gray-400">{teacher.phone}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-4 text-sm text-gray-600">
+                                                    <span className="bg-gray-100 px-2 py-1 rounded text-xs font-medium">
+                                                        {teacher.qualification || 'N/A'}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-4 text-right">
+                                                    <button className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50">
+                                                        <FaTrash />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </>
                         )}
                     </div>
                 </motion.div>

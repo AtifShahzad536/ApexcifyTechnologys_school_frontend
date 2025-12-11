@@ -58,7 +58,56 @@ const LeaveRequests = () => {
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full">
+                        {/* Mobile View - Cards */}
+                        <div className="md:hidden">
+                            {leaves.map((leave) => (
+                                <div key={leave._id} className="p-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
+                                    <div className="flex items-center mb-3">
+                                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-3">
+                                            {leave.user?.name?.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-gray-800">{leave.user?.name}</div>
+                                            <div className="text-xs text-gray-500 capitalize">{leave.user?.role}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2 mb-4">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-500">Date:</span>
+                                            <span className="font-medium text-gray-800">
+                                                {new Date(leave.startDate).toLocaleDateString()} - {new Date(leave.endDate).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-500">Type:</span>
+                                            <span className="font-medium text-gray-800 bg-gray-100 px-2 py-0.5 rounded text-xs">{leave.leaveType}</span>
+                                        </div>
+                                        <div className="bg-gray-50 p-3 rounded-lg text-sm text-gray-600 italic">
+                                            "{leave.reason}"
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            onClick={() => handleAction(leave._id, 'Approved')}
+                                            className="flex items-center justify-center px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm font-bold"
+                                        >
+                                            <FaCheck className="mr-2" /> Approve
+                                        </button>
+                                        <button
+                                            onClick={() => handleAction(leave._id, 'Rejected')}
+                                            className="flex items-center justify-center px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-bold"
+                                        >
+                                            <FaTimes className="mr-2" /> Reject
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Desktop View - Table */}
+                        <table className="w-full hidden md:table">
                             <thead className="bg-gray-50 text-gray-600 font-semibold text-sm uppercase tracking-wider">
                                 <tr>
                                     <th className="px-6 py-4 text-left">Applicant</th>

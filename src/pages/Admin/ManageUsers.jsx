@@ -136,8 +136,57 @@ const ManageUsers = () => {
                 </div>
             </div>
 
-            {/* Users Table */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            {/* Mobile View - Cards */}
+            <div className="md:hidden space-y-4 mb-6">
+                {filteredUsers.map((user) => (
+                    <div key={user._id} className="bg-white p-4 rounded-xl shadow-md border border-gray-200">
+                        <div className="flex items-center mb-4">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${user.role === 'Student' ? 'bg-blue-100' : 'bg-green-100'
+                                }`}>
+                                {user.role === 'Student' ?
+                                    <FaUserGraduate className="text-xl text-blue-600" /> :
+                                    <FaChalkboardTeacher className="text-xl text-green-600" />
+                                }
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-gray-800 text-lg">{user.name}</h3>
+                                <p className="text-sm text-gray-500 break-all">{user.email}</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                            <div className="bg-gray-50 p-2 rounded-lg">
+                                <span className="block text-xs font-bold text-gray-400 uppercase">Role</span>
+                                <span className={`text-sm font-semibold ${user.role === 'Student' ? 'text-blue-600' : 'text-green-600'
+                                    }`}>{user.role || 'N/A'}</span>
+                            </div>
+                            <div className="bg-gray-50 p-2 rounded-lg">
+                                <span className="block text-xs font-bold text-gray-400 uppercase">Class</span>
+                                <span className="text-sm font-semibold text-gray-700">
+                                    {user.studentClass ? `${user.studentClass.name}-${user.studentClass.section}` : '-'}
+                                </span>
+                            </div>
+                            <div className="bg-gray-50 p-2 rounded-lg">
+                                <span className="block text-xs font-bold text-gray-400 uppercase">Roll No</span>
+                                <span className="text-sm font-semibold text-gray-700">{user.rollNumber || '-'}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => openEditModal(user)}
+                            className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition"
+                        >
+                            <FaEdit /> Edit User
+                        </button>
+                    </div>
+                ))}
+                {filteredUsers.length === 0 && (
+                    <div className="text-center py-8 text-gray-400">No users found</div>
+                )}
+            </div>
+
+            {/* Desktop View - Table */}
+            <div className="hidden md:block bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
                         <thead className="bg-blue-50">

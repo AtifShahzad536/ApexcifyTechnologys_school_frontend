@@ -103,19 +103,37 @@ const Classes = () => {
                     {classes.length === 0 ? (
                         <p className="text-gray-500">No classes added yet.</p>
                     ) : (
-                        <ul>
-                            {classes.map((cls) => (
-                                <li key={cls._id} className="border-b py-3 flex justify-between items-center last:border-0">
-                                    <div>
-                                        <span className="font-semibold text-lg">{cls.name}</span>
-                                        <span className="bg-gray-200 text-xs px-2 py-1 rounded ml-2 text-gray-700">Section {cls.section}</span>
+                        <>
+                            {/* Mobile View - Cards */}
+                            <div className="md:hidden space-y-4">
+                                {classes.map((cls) => (
+                                    <div key={cls._id} className="border p-4 rounded-lg bg-gray-50 flex justify-between items-center bg-white shadow-sm">
+                                        <div>
+                                            <span className="block font-bold text-gray-800 text-lg">{cls.name}</span>
+                                            <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-semibold mt-1">Section {cls.section}</span>
+                                        </div>
+                                        <button className="text-red-500 hover:text-red-700 bg-white p-2 rounded-full shadow-sm border border-gray-100">
+                                            <FaTrash />
+                                        </button>
                                     </div>
-                                    <button className="text-red-500 hover:text-red-700">
-                                        <FaTrash />
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                                ))}
+                            </div>
+
+                            {/* Desktop View - List */}
+                            <ul className="hidden md:block">
+                                {classes.map((cls) => (
+                                    <li key={cls._id} className="border-b py-3 flex justify-between items-center last:border-0 hover:bg-gray-50 px-2 rounded transition-colors">
+                                        <div>
+                                            <span className="font-semibold text-lg text-gray-800">{cls.name}</span>
+                                            <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded ml-3 font-medium border border-gray-200">Section {cls.section}</span>
+                                        </div>
+                                        <button className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                            <FaTrash />
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
                     )}
                 </motion.div>
             </div>

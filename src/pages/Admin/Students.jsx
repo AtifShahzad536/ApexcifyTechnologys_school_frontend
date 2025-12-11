@@ -180,41 +180,68 @@ const Students = () => {
                                 <p className="text-gray-400 text-sm">Add a new student to get started.</p>
                             </div>
                         ) : (
-                            <table className="min-w-full">
-                                <thead className="bg-blue-50 rounded-lg text-blue-800">
-                                    <tr>
-                                        <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider rounded-l-lg">Name</th>
-                                        <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Class</th>
-                                        <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Roll</th>
-                                        <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Contact</th>
-                                        <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider rounded-r-lg">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
+                            <>
+                                {/* Mobile View - Cards */}
+                                <div className="md:hidden space-y-4">
                                     {students.map((student) => (
-                                        <tr key={student._id} className="hover:bg-blue-50/50 transition-colors group">
-                                            <td className="py-4 px-4">
-                                                <div className="font-semibold text-gray-800">{student.name}</div>
-                                            </td>
-                                            <td className="py-4 px-4 text-gray-600">
-                                                {student.studentClass ? (
-                                                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-xs font-bold">
-                                                        {student.studentClass.name}
-                                                    </span>
-                                                ) : <span className="text-gray-400 italic">Unassigned</span>}
-                                                {student.studentClass && <span className="ml-1 text-gray-400 text-xs">{student.studentClass.section}</span>}
-                                            </td>
-                                            <td className="py-4 px-4 font-mono text-sm text-gray-600">{student.rollNumber || '-'}</td>
-                                            <td className="py-4 px-4 text-sm text-gray-500">{student.email}</td>
-                                            <td className="py-4 px-4 text-right">
-                                                <button className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50">
-                                                    <FaTrash />
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        <div key={student._id} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                            <div className="flex justify-between items-start mb-3">
+                                                <div>
+                                                    <h3 className="font-bold text-gray-800">{student.name}</h3>
+                                                    <p className="text-xs text-gray-500 break-all">{student.email}</p>
+                                                </div>
+                                                <div className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-xs font-bold whitespace-nowrap">
+                                                    {student.studentClass ? student.studentClass.name : 'N/A'}
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+                                                <div className='bg-white p-2 rounded'>Roll: <span className="font-semibold">{student.rollNumber || '-'}</span></div>
+                                                <div className='bg-white p-2 rounded'>Section: <span className="font-semibold">{student.studentClass?.section || '-'}</span></div>
+                                            </div>
+                                            <button className="w-full text-red-500 bg-white border border-red-100 font-semibold py-2 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+                                                <FaTrash /> Remove
+                                            </button>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
+                                </div>
+
+                                {/* Desktop View - Table */}
+                                <table className="min-w-full hidden md:table">
+                                    <thead className="bg-blue-50 rounded-lg text-blue-800">
+                                        <tr>
+                                            <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider rounded-l-lg">Name</th>
+                                            <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Class</th>
+                                            <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Roll</th>
+                                            <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Contact</th>
+                                            <th className="py-3 px-4 text-right text-xs font-bold uppercase tracking-wider rounded-r-lg">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {students.map((student) => (
+                                            <tr key={student._id} className="hover:bg-blue-50/50 transition-colors group">
+                                                <td className="py-4 px-4">
+                                                    <div className="font-semibold text-gray-800">{student.name}</div>
+                                                </td>
+                                                <td className="py-4 px-4 text-gray-600">
+                                                    {student.studentClass ? (
+                                                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-xs font-bold">
+                                                            {student.studentClass.name}
+                                                        </span>
+                                                    ) : <span className="text-gray-400 italic">Unassigned</span>}
+                                                    {student.studentClass && <span className="ml-1 text-gray-400 text-xs">{student.studentClass.section}</span>}
+                                                </td>
+                                                <td className="py-4 px-4 font-mono text-sm text-gray-600">{student.rollNumber || '-'}</td>
+                                                <td className="py-4 px-4 text-sm text-gray-500">{student.email}</td>
+                                                <td className="py-4 px-4 text-right">
+                                                    <button className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50">
+                                                        <FaTrash />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </>
                         )}
                     </div>
                 </motion.div>
