@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaTrash, FaDownload, FaFileAlt } from 'react-icons/fa';
+import { FaTrash, FaDownload, FaFileAlt, FaPlus, FaFilePdf, FaVideo, FaLink, FaExternalLinkAlt } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 
