@@ -74,7 +74,7 @@ const Register = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-md p-8 bg-white rounded-2xl shadow-2xl"
+                className="w-full max-w-md p-6 md:p-8 bg-white rounded-2xl shadow-2xl"
             >
                 <h2 className="mb-6 text-3xl font-extrabold text-center text-gray-800">Create Account</h2>
                 <p className="text-center text-gray-600 mb-6 text-sm">

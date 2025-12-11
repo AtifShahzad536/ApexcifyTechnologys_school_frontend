@@ -24,8 +24,11 @@ const Assignments = () => {
 
     const fetchAssignments = async () => {
         try {
+            const config = {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            };
             // In a real app, filter by student's class
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/assignments`);
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/assignments`, config);
             setAssignments(data);
         } catch (error) {
             console.error(error);
@@ -34,7 +37,10 @@ const Assignments = () => {
 
     const fetchSubmissions = async () => {
         try {
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/submissions?studentId=${userInfo._id}`);
+            const config = {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            };
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/submissions?studentId=${userInfo._id}`, config);
             setSubmissions(data);
         } catch (error) {
             console.error(error);
@@ -47,10 +53,13 @@ const Assignments = () => {
 
         setLoading(true);
         try {
+            const config = {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            };
             await axios.post(`${import.meta.env.VITE_API_URL}/submissions`, {
                 assignment: selectedAssignment._id,
                 content: submissionContent
-            });
+            }, config);
 
             toast.success('Assignment submitted successfully!');
             setSubmissionContent('');

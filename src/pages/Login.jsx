@@ -38,7 +38,7 @@ const Login = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-md p-8 bg-white rounded shadow-md"
+                className="w-full max-w-md p-6 md:p-8 bg-white rounded shadow-md"
             >
                 <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Login</h2>
                 {error && <div className="p-3 mb-4 text-red-700 bg-red-100 rounded">{error}</div>}
