@@ -29,7 +29,7 @@ const ManageUsers = () => {
     const fetchUsers = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const { data } = await axios.get('http://localhost:5000/api/approvals/users', {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/approvals/users`, {
                 headers: {
                     Authorization: `Bearer ${userInfo.token}`
                 }
@@ -42,7 +42,7 @@ const ManageUsers = () => {
 
     const fetchClasses = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/classes');
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/classes`);
             setClasses(data);
         } catch (error) {
             console.error(error);
@@ -51,7 +51,7 @@ const ManageUsers = () => {
 
     const fetchSubjects = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/subjects');
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/subjects`);
             setSubjects(data);
         } catch (error) {
             console.error(error);
@@ -72,7 +72,7 @@ const ManageUsers = () => {
         setLoading(true);
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            await axios.put(`http://localhost:5000/api/approvals/${selectedUser._id}/update`, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/approvals/${selectedUser._id}/update`, {
                 role: editRole,
                 studentClass: editRole === 'Student' ? editClass : null,
                 rollNumber: editRole === 'Student' ? editRollNumber : null
@@ -119,14 +119,14 @@ const ManageUsers = () => {
                             placeholder="Search by name or email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-base"
                         />
                     </div>
                     <div>
                         <select
                             value={filterRole}
                             onChange={(e) => setFilterRole(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-base"
                         >
                             <option value="All">All Roles</option>
                             <option value="Student">Students</option>
