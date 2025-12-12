@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaHome, FaUserGraduate, FaChalkboardTeacher, FaChalkboard, FaBook, FaUserCheck, FaTrophy, FaChartLine, FaChevronDown, FaChevronRight, FaClipboardList, FaClock, FaEdit, FaFileAlt, FaCalendarAlt, FaLaptop, FaMoneyBillAlt, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const { userInfo } = useSelector((state) => state.auth);
     const location = useLocation();
     const [openMenus, setOpenMenus] = useState({});
+    const [pendingCount, setPendingCount] = useState(0);
 
     const isActive = (path) => location.pathname === path;
     const isParentActive = (paths) => paths.some(path => location.pathname.startsWith(path));
@@ -19,11 +21,39 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }));
     };
 
+    // Fetch pending approval count
+    const fetchPendingCount = async () => {
+        try {
+            if (userInfo?.role === 'Admin' && userInfo?.token) {
+                const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/approvals/count`, {
+                    headers: { Authorization: `Bearer ${userInfo.token}` }
+                });
+                setPendingCount(data.count || 0);
+            }
+        } catch (error) {
+            console.error('Error fetching pending count:', error);
+        }
+    };
+
+    // Poll for pending approvals every 30 seconds
+    useEffect(() => {
+        if (userInfo?.role === 'Admin') {
+            fetchPendingCount(); // Initial fetch
+            const interval = setInterval(fetchPendingCount, 30000); // Poll every 30 seconds
+            return () => clearInterval(interval); // Cleanup on unmount
+        }
+    }, [userInfo]);
+
     // Navigation structure with submenus
     const navStructure = {
         Admin: [
             { path: '/admin/dashboard', label: 'Dashboard', icon: <FaHome /> },
-            { path: '/admin/approvals', label: 'Pending Approvals', icon: <FaClock /> },
+            {
+                path: '/admin/approvals',
+                label: 'Pending Approvals',
+                icon: <FaClock />,
+                badge: pendingCount > 0 ? pendingCount : null
+            },
             {
                 label: 'Academic',
                 icon: <FaBook />,
@@ -234,16 +264,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                     <li key={item.path}>
                                         <Link
                                             to={item.path}
-                                            className={`flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 group relative overflow-hidden ${isActive(item.path)
+                                            className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all duration-300 group relative overflow-hidden ${isActive(item.path)
                                                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25 translate-x-1'
                                                 : 'text-gray-500 hover:bg-blue-50 hover:text-blue-600'
                                                 }`}
                                         >
-                                            <span className={`mr-4 text-xl relative z-10 transition-colors duration-300 ${isActive(item.path) ? 'text-white' : 'text-gray-400 group-hover:text-blue-500'
-                                                }`}>
-                                                {item.icon}
-                                            </span>
-                                            <span className="font-semibold text-sm tracking-wide relative z-10">{item.label}</span>
+                                            <div className="flex items-center">
+                                                <span className={`mr-4 text-xl relative z-10 transition-colors duration-300 ${isActive(item.path) ? 'text-white' : 'text-gray-400 group-hover:text-blue-500'
+                                                    }`}>
+                                                    {item.icon}
+                                                </span>
+                                                <span className="font-semibold text-sm tracking-wide relative z-10">{item.label}</span>
+                                            </div>
+
+                                            {/* Badge for count */}
+                                            {item.badge && (
+                                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${isActive(item.path)
+                                                    ? 'bg-white text-blue-600'
+                                                    : 'bg-red-500 text-white'
+                                                    }`}>
+                                                    {item.badge}
+                                                </span>
+                                            )}
 
                                             {/* Active State Decoration */}
                                             {isActive(item.path) && (

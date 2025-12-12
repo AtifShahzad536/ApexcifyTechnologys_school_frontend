@@ -64,6 +64,22 @@ const Students = () => {
         }
     };
 
+    const handleDelete = async (studentId) => {
+        if (!window.confirm('Are you sure you want to delete this student?')) return;
+
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            await axios.delete(`${import.meta.env.VITE_API_URL}/students/${studentId}`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            toast.success('Student deleted successfully');
+            fetchStudents(); // Refresh list
+        } catch (error) {
+            const message = error.response?.data?.message || error.message;
+            toast.error(message);
+        }
+    };
+
     return (
         <div className="bg-gray-50 min-h-screen">
             <div className="mb-6 flex justify-between items-center">
@@ -198,7 +214,10 @@ const Students = () => {
                                                 <div className='bg-white p-2 rounded'>Roll: <span className="font-semibold">{student.rollNumber || '-'}</span></div>
                                                 <div className='bg-white p-2 rounded'>Section: <span className="font-semibold">{student.studentClass?.section || '-'}</span></div>
                                             </div>
-                                            <button className="w-full text-red-500 bg-white border border-red-100 font-semibold py-2 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+                                            <button
+                                                onClick={() => handleDelete(student._id)}
+                                                className="w-full text-red-500 bg-white border border-red-100 font-semibold py-2 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                                            >
                                                 <FaTrash /> Remove
                                             </button>
                                         </div>
@@ -233,7 +252,10 @@ const Students = () => {
                                                 <td className="py-4 px-4 font-mono text-sm text-gray-600">{student.rollNumber || '-'}</td>
                                                 <td className="py-4 px-4 text-sm text-gray-500">{student.email}</td>
                                                 <td className="py-4 px-4 text-right">
-                                                    <button className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50">
+                                                    <button
+                                                        onClick={() => handleDelete(student._id)}
+                                                        className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
+                                                    >
                                                         <FaTrash />
                                                     </button>
                                                 </td>

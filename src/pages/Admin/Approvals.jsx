@@ -23,6 +23,14 @@ const Approvals = () => {
         fetchPendingUsers();
         fetchClasses();
         fetchStudents();
+
+        // Auto-refresh pending users every 30 seconds
+        const interval = setInterval(() => {
+            fetchPendingUsers();
+        }, 30000);
+
+        // Cleanup interval on unmount
+        return () => clearInterval(interval);
     }, []);
 
     const fetchPendingUsers = async () => {
