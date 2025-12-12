@@ -44,6 +44,21 @@ const Classes = () => {
         }
     };
 
+    const handleDelete = async (classId) => {
+        if (!window.confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/classes/${classId}`);
+            toast.success('Class deleted successfully');
+            fetchClasses(); // Refresh list
+        } catch (err) {
+            const message = err.response?.data?.message || err.message;
+            toast.error(message);
+        }
+    };
+
 
     return (
         <div>
@@ -112,7 +127,10 @@ const Classes = () => {
                                             <span className="block font-bold text-gray-800 text-lg">{cls.name}</span>
                                             <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-semibold mt-1">Section {cls.section}</span>
                                         </div>
-                                        <button className="text-red-500 hover:text-red-700 bg-white p-2 rounded-full shadow-sm border border-gray-100">
+                                        <button
+                                            onClick={() => handleDelete(cls._id)}
+                                            className="text-red-500 hover:text-red-700 bg-white p-2 rounded-full shadow-sm border border-gray-100"
+                                        >
                                             <FaTrash />
                                         </button>
                                     </div>
@@ -127,7 +145,10 @@ const Classes = () => {
                                             <span className="font-semibold text-lg text-gray-800">{cls.name}</span>
                                             <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded ml-3 font-medium border border-gray-200">Section {cls.section}</span>
                                         </div>
-                                        <button className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors">
+                                        <button
+                                            onClick={() => handleDelete(cls._id)}
+                                            className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                                        >
                                             <FaTrash />
                                         </button>
                                     </li>

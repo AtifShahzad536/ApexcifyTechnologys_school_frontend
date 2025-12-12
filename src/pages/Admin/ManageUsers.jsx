@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUserGraduate, FaChalkboardTeacher, FaUserShield, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
+import { FaUserGraduate, FaChalkboardTeacher, FaUserShield, FaUsers, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const ManageUsers = () => {
@@ -93,6 +93,21 @@ const ManageUsers = () => {
         }
     };
 
+    const getRoleConfig = (role) => {
+        switch (role) {
+            case 'Student':
+                return { icon: FaUserGraduate, bgColor: 'bg-blue-100', textColor: 'text-blue-600', badgeColor: 'bg-blue-100 text-blue-700' };
+            case 'Teacher':
+                return { icon: FaChalkboardTeacher, bgColor: 'bg-green-100', textColor: 'text-green-600', badgeColor: 'bg-green-100 text-green-700' };
+            case 'Parent':
+                return { icon: FaUsers, bgColor: 'bg-purple-100', textColor: 'text-purple-600', badgeColor: 'bg-purple-100 text-purple-700' };
+            case 'Admin':
+                return { icon: FaUserShield, bgColor: 'bg-red-100', textColor: 'text-red-600', badgeColor: 'bg-red-100 text-red-700' };
+            default:
+                return { icon: FaUserGraduate, bgColor: 'bg-gray-100', textColor: 'text-gray-600', badgeColor: 'bg-gray-100 text-gray-700' };
+        }
+    };
+
     const filteredUsers = users.filter(user => {
         const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -131,6 +146,8 @@ const ManageUsers = () => {
                             <option value="All">All Roles</option>
                             <option value="Student">Students</option>
                             <option value="Teacher">Teachers</option>
+                            <option value="Parent">Parents</option>
+                            <option value="Admin">Admins</option>
                         </select>
                     </div>
                 </div>
@@ -138,48 +155,47 @@ const ManageUsers = () => {
 
             {/* Mobile View - Cards */}
             <div className="md:hidden space-y-4 mb-6">
-                {filteredUsers.map((user) => (
-                    <div key={user._id} className="bg-white p-4 rounded-xl shadow-md border border-gray-200">
-                        <div className="flex items-center mb-4">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${user.role === 'Student' ? 'bg-blue-100' : 'bg-green-100'
-                                }`}>
-                                {user.role === 'Student' ?
-                                    <FaUserGraduate className="text-xl text-blue-600" /> :
-                                    <FaChalkboardTeacher className="text-xl text-green-600" />
-                                }
+                {filteredUsers.map((user) => {
+                    const roleConfig = getRoleConfig(user.role);
+                    const RoleIcon = roleConfig.icon;
+                    return (
+                        <div key={user._id} className="bg-white p-4 rounded-xl shadow-md border border-gray-200">
+                            <div className="flex items-center mb-4">
+                                <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${roleConfig.bgColor}`}>
+                                    <RoleIcon className={`text-xl ${roleConfig.textColor}`} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-800 text-lg">{user.name}</h3>
+                                    <p className="text-sm text-gray-500 break-all">{user.email}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="font-bold text-gray-800 text-lg">{user.name}</h3>
-                                <p className="text-sm text-gray-500 break-all">{user.email}</p>
-                            </div>
-                        </div>
 
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                            <div className="bg-gray-50 p-2 rounded-lg">
-                                <span className="block text-xs font-bold text-gray-400 uppercase">Role</span>
-                                <span className={`text-sm font-semibold ${user.role === 'Student' ? 'text-blue-600' : 'text-green-600'
-                                    }`}>{user.role || 'N/A'}</span>
+                            <div className="grid grid-cols-2 gap-3 mb-4">
+                                <div className="bg-gray-50 p-2 rounded-lg">
+                                    <span className="block text-xs font-bold text-gray-400 uppercase">Role</span>
+                                    <span className={`text-sm font-semibold ${roleConfig.textColor}`}>{user.role || 'N/A'}</span>
+                                </div>
+                                <div className="bg-gray-50 p-2 rounded-lg">
+                                    <span className="block text-xs font-bold text-gray-400 uppercase">Class</span>
+                                    <span className="text-sm font-semibold text-gray-700">
+                                        {user.studentClass ? `${user.studentClass.name}-${user.studentClass.section}` : '-'}
+                                    </span>
+                                </div>
+                                <div className="bg-gray-50 p-2 rounded-lg">
+                                    <span className="block text-xs font-bold text-gray-400 uppercase">Roll No</span>
+                                    <span className="text-sm font-semibold text-gray-700">{user.rollNumber || '-'}</span>
+                                </div>
                             </div>
-                            <div className="bg-gray-50 p-2 rounded-lg">
-                                <span className="block text-xs font-bold text-gray-400 uppercase">Class</span>
-                                <span className="text-sm font-semibold text-gray-700">
-                                    {user.studentClass ? `${user.studentClass.name}-${user.studentClass.section}` : '-'}
-                                </span>
-                            </div>
-                            <div className="bg-gray-50 p-2 rounded-lg">
-                                <span className="block text-xs font-bold text-gray-400 uppercase">Roll No</span>
-                                <span className="text-sm font-semibold text-gray-700">{user.rollNumber || '-'}</span>
-                            </div>
-                        </div>
 
-                        <button
-                            onClick={() => openEditModal(user)}
-                            className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition"
-                        >
-                            <FaEdit /> Edit User
-                        </button>
-                    </div>
-                ))}
+                            <button
+                                onClick={() => openEditModal(user)}
+                                className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition"
+                            >
+                                <FaEdit /> Edit User
+                            </button>
+                        </div>
+                    );
+                })}
                 {filteredUsers.length === 0 && (
                     <div className="text-center py-8 text-gray-400">No users found</div>
                 )}
@@ -207,46 +223,45 @@ const ManageUsers = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredUsers.map((user) => (
-                                    <tr key={user._id} className="hover:bg-blue-50/50 transition-colors">
-                                        <td className="py-3 px-4">
-                                            <div className="flex items-center">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${user.role === 'Student' ? 'bg-blue-100' : 'bg-green-100'
-                                                    }`}>
-                                                    {user.role === 'Student' ?
-                                                        <FaUserGraduate className="text-blue-600" /> :
-                                                        <FaChalkboardTeacher className="text-green-600" />
-                                                    }
+                                filteredUsers.map((user) => {
+                                    const roleConfig = getRoleConfig(user.role);
+                                    const RoleIcon = roleConfig.icon;
+                                    return (
+                                        <tr key={user._id} className="hover:bg-blue-50/50 transition-colors">
+                                            <td className="py-3 px-4">
+                                                <div className="flex items-center">
+                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${roleConfig.bgColor}`}>
+                                                        <RoleIcon className={roleConfig.textColor} />
+                                                    </div>
+                                                    <span className="font-semibold text-gray-800">{user.name}</span>
                                                 </div>
-                                                <span className="font-semibold text-gray-800">{user.name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-gray-600">{user.email}</td>
-                                        <td className="py-3 px-4">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${user.role === 'Student' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
-                                                }`}>
-                                                {user.role || 'Not Assigned'}
-                                            </span>
-                                        </td>
-                                        <td className="py-3 px-4 text-gray-600">
-                                            {user.studentClass ?
-                                                `${user.studentClass.name} - ${user.studentClass.section}` :
-                                                <span className="text-orange-500 italic">Unassigned</span>
-                                            }
-                                        </td>
-                                        <td className="py-3 px-4 text-gray-600">
-                                            {user.rollNumber || <span className="text-gray-400 italic">-</span>}
-                                        </td>
-                                        <td className="py-3 px-4 text-center">
-                                            <button
-                                                onClick={() => openEditModal(user)}
-                                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2 font-semibold text-sm"
-                                            >
-                                                <FaEdit /> Edit
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
+                                            </td>
+                                            <td className="py-3 px-4 text-gray-600">{user.email}</td>
+                                            <td className="py-3 px-4">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${roleConfig.badgeColor}`}>
+                                                    {user.role || 'Not Assigned'}
+                                                </span>
+                                            </td>
+                                            <td className="py-3 px-4 text-gray-600">
+                                                {user.studentClass ?
+                                                    `${user.studentClass.name} - ${user.studentClass.section}` :
+                                                    <span className="text-orange-500 italic">Unassigned</span>
+                                                }
+                                            </td>
+                                            <td className="py-3 px-4 text-gray-600">
+                                                {user.rollNumber || <span className="text-gray-400 italic">-</span>}
+                                            </td>
+                                            <td className="py-3 px-4 text-center">
+                                                <button
+                                                    onClick={() => openEditModal(user)}
+                                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2 font-semibold text-sm"
+                                                >
+                                                    <FaEdit /> Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
@@ -285,6 +300,8 @@ const ManageUsers = () => {
                                     >
                                         <option value="Student">Student</option>
                                         <option value="Teacher">Teacher</option>
+                                        <option value="Parent">Parent</option>
+                                        <option value="Admin">Admin</option>
                                     </select>
                                 </div>
 
