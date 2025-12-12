@@ -127,20 +127,20 @@ const Approvals = () => {
     };
 
     return (
-        <div className="bg-gray-50 min-h-screen">
-            <div className="mb-6">
-                <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight">
+        <div className="bg-gray-50 min-h-screen p-4 sm:p-6">
+            <div className="mb-4 sm:mb-6">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-tight">
                     Pending <span className="text-blue-600">Approvals</span>
                 </h1>
-                <p className="text-gray-500 mt-2">Review and approve new user registrations</p>
+                <p className="text-gray-500 mt-2 text-sm sm:text-base">Review and approve new user registrations</p>
             </div>
 
             {/* Stats */}
-            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center">
-                <FaUserClock className="text-3xl text-blue-600 mr-4" />
+            <div className="mb-4 sm:mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center">
+                <FaUserClock className="text-2xl sm:text-3xl text-blue-600 mr-3 sm:mr-4" />
                 <div>
-                    <p className="text-sm text-gray-600">Pending Requests</p>
-                    <p className="text-2xl font-bold text-gray-800">{pendingUsers.length}</p>
+                    <p className="text-xs sm:text-sm text-gray-600">Pending Requests</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-800">{pendingUsers.length}</p>
                 </div>
             </div>
 
@@ -157,33 +157,33 @@ const Approvals = () => {
                             key={user._id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow"
+                            className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 hover:shadow-xl transition-shadow overflow-hidden"
                         >
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center flex-1">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <div className="flex flex-col gap-3">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                                         <FaUser className="text-blue-600 text-xl" />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-lg font-bold text-gray-800">{user.name}</h3>
-                                        <p className="text-sm text-gray-600">{user.email}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-base sm:text-lg font-bold text-gray-800 truncate">{user.name}</h3>
+                                        <p className="text-xs sm:text-sm text-gray-600 truncate">{user.email}</p>
                                         <p className="text-xs text-gray-500 mt-1">
                                             Requested: {getTimeAgo(user.requestedAt)}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex gap-3">
+                                <div className="flex gap-2 w-full">
                                     <button
                                         onClick={() => openApprovalModal(user)}
-                                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 font-semibold"
+                                        className="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-1.5 font-semibold text-xs sm:text-sm"
                                     >
-                                        <FaCheck /> Approve
+                                        <FaCheck className="text-xs" /> Approve
                                     </button>
                                     <button
                                         onClick={() => handleReject(user._id)}
-                                        className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 font-semibold"
+                                        className="flex-1 bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-1.5 font-semibold text-xs sm:text-sm"
                                     >
-                                        <FaTimes /> Reject
+                                        <FaTimes className="text-xs" /> Reject
                                     </button>
                                 </div>
                             </div>
