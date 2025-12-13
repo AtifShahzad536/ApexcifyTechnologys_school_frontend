@@ -21,7 +21,7 @@ const Layout = () => {
         <div className="flex bg-gray-50 min-h-screen font-sans">
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
-            <div className={`flex-1 flex flex-col h-screen transition-all duration-300 ${isSidebarOpen ? 'ml-0' : 'ml-0 md:ml-64'}`}>
+            <div className={`flex-1 flex flex-col h-screen overflow-x-hidden transition-all duration-300 ${isSidebarOpen ? 'ml-0' : 'ml-0 md:ml-64'}`}>
                 {/* Top Header */}
                 <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-4 md:px-8 z-10 w-full sticky top-0">
                     <div className="flex items-center">

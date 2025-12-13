@@ -4,10 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaUserGraduate, FaChalkboardTeacher, FaUserShield, FaUsers, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
+
+
 const ManageUsers = () => {
     const [users, setUsers] = useState([]);
     const [classes, setClasses] = useState([]);
     const [subjects, setSubjects] = useState([]);
+    const [students, setStudents] = useState([]); // New State
     const [searchTerm, setSearchTerm] = useState('');
     const [filterRole, setFilterRole] = useState('All');
 
@@ -18,12 +21,14 @@ const ManageUsers = () => {
     const [editRole, setEditRole] = useState('');
     const [editClass, setEditClass] = useState('');
     const [editRollNumber, setEditRollNumber] = useState('');
+    const [selectedChildren, setSelectedChildren] = useState([]); // New State
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchUsers();
         fetchClasses();
         fetchSubjects();
+        fetchStudents(); // Fetch students
     }, []);
 
     const fetchUsers = async () => {
@@ -35,6 +40,28 @@ const ManageUsers = () => {
                 }
             });
             setUsers(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Helper to fetch all students independently or derive from users if acceptable. 
+    // Since 'users' contains all approved users including students, we might not need a separate API call if 'users' is already populated.
+    // However, fetchUsers updates 'users' state. 
+    // Let's rely on 'users' state for students list to avoid extra API call if possible, 
+    // BUT 'users' state might be filtered or empty initially. 
+    // Safer to just filter `data` in `fetchUsers` or generic `fetchStudents`.
+    // Actually, `fetchUsers` gets all approved users. So I can just derive students from `users` state or fetch them separately to be sure.
+    // Let's implement `fetchStudents` specifically to ensure we have a clean list even if main list is paginated in future.
+    // For now, reuse the /approvals/users endpoint.
+
+    const fetchStudents = async () => {
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/approvals/users`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            setStudents(data.filter(u => u.role === 'Student'));
         } catch (error) {
             console.error(error);
         }
@@ -63,6 +90,9 @@ const ManageUsers = () => {
         setEditRole(user.role || 'Student');
         setEditClass(user.studentClass?._id || '');
         setEditRollNumber(user.rollNumber || '');
+        // Map children to IDs. Handle case where children might be populated objects or just IDs.
+        // Based on controller, it populates children.
+        setSelectedChildren(user.children ? user.children.map(c => c._id || c) : []);
         setShowModal(true);
     };
 
@@ -75,7 +105,8 @@ const ManageUsers = () => {
             await axios.put(`${import.meta.env.VITE_API_URL}/approvals/${selectedUser._id}/update`, {
                 role: editRole,
                 studentClass: editRole === 'Student' ? editClass : null,
-                rollNumber: editRole === 'Student' ? editRollNumber : null
+                rollNumber: editRole === 'Student' ? editRollNumber : null,
+                children: editRole === 'Parent' ? selectedChildren : [] // Send children
             }, {
                 headers: {
                     Authorization: `Bearer ${userInfo.token}`
@@ -132,7 +163,7 @@ const ManageUsers = () => {
     });
 
     return (
-        <div className="bg-gray-50 min-h-screen">
+        <div className="bg-gray-50 min-h-screen overflow-x-hidden">
             <div className="mb-6">
                 <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight">
                     Manage <span className="text-blue-600">Users</span>
@@ -226,8 +257,8 @@ const ManageUsers = () => {
             </div>
 
             {/* Desktop View - Table */}
-            <div className="hidden md:block bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                <div className="overflow-x-auto">
+            <div className="hidden md:block bg-white rounded-xl shadow-lg border border-gray-200">
+                <div className="overflow-x-auto w-full custom-scrollbar">
                     <table className="min-w-full">
                         <thead className="bg-blue-50">
                             <tr>
@@ -314,7 +345,7 @@ const ManageUsers = () => {
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
-                            className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full"
+                            className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <h2 className="text-2xl font-bold text-gray-800 mb-4">Edit User Details</h2>
@@ -365,6 +396,36 @@ const ManageUsers = () => {
                                             />
                                         </div>
                                     </>
+                                )}
+
+                                {editRole === 'Parent' && (
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Assign Children</label>
+                                        <div className="border border-gray-300 rounded-lg overflow-y-auto max-h-48 divide-y divide-gray-100">
+                                            {students.map(student => (
+                                                <div
+                                                    key={student._id}
+                                                    onClick={() => setSelectedChildren(prev => prev.includes(student._id) ? prev.filter(id => id !== student._id) : [...prev, student._id])}
+                                                    className={`p-3 flex items-center cursor-pointer transition-colors ${selectedChildren.includes(student._id) ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedChildren.includes(student._id)}
+                                                        onChange={() => { }} // handled by div click
+                                                        className="mr-3 h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                                                    />
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-gray-800">{student.name}</p>
+                                                        <p className="text-xs text-gray-500">{student.email}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {students.length === 0 && (
+                                                <div className="p-4 text-center text-gray-400 text-sm">No students found</div>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-1">Select one or more students to link as children.</p>
+                                    </div>
                                 )}
                             </div>
 

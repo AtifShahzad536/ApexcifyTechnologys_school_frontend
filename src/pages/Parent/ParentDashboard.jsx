@@ -45,6 +45,7 @@ const ParentDashboard = () => {
     const [children, setChildren] = useState([]);
     const [loading, setLoading] = useState(true);
     const [meetings, setMeetings] = useState([]);
+    const [selectedChild, setSelectedChild] = useState(null);
 
     useEffect(() => {
         fetchData();
