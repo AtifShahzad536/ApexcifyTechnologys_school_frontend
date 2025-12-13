@@ -63,12 +63,12 @@ const AdminDashboard = () => {
             const headers = userInfo?.token ? { Authorization: `Bearer ${userInfo.token}` } : {};
 
             const [studentsRes, teachersRes, classesRes, subjectsRes, approvalsRes, parentsRes] = await Promise.all([
-                axios.get(`${import.meta.env.VITE_API_URL}/students`),
-                axios.get(`${import.meta.env.VITE_API_URL}/teachers`),
-                axios.get(`${import.meta.env.VITE_API_URL}/classes`),
-                axios.get(`${import.meta.env.VITE_API_URL}/subjects`),
+                axios.get(`${import.meta.env.VITE_API_URL}/students`, { headers }),
+                axios.get(`${import.meta.env.VITE_API_URL}/teachers`, { headers }),
+                axios.get(`${import.meta.env.VITE_API_URL}/classes`, { headers }),
+                axios.get(`${import.meta.env.VITE_API_URL}/subjects`, { headers }),
                 axios.get(`${import.meta.env.VITE_API_URL}/approvals/pending`, { headers }).catch(() => ({ data: [] })),
-                axios.get(`${import.meta.env.VITE_API_URL}/parents`).catch(() => ({ data: [] }))
+                axios.get(`${import.meta.env.VITE_API_URL}/parents`, { headers }).catch(() => ({ data: [] }))
             ]);
 
             const students = studentsRes.data;
