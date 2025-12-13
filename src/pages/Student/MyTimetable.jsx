@@ -28,18 +28,32 @@ const MyTimetable = () => {
             setEvents(eventsRes.data);
 
             // Fetch student class and timetable
-            const studentProfile = await axios.get(`${import.meta.env.VITE_API_URL}/students/${userInfo._id}`);
-            const classId = studentProfile.data.studentClass?._id;
+            const studentProfile = await axios.get(`${import.meta.env.VITE_API_URL}/students/${userInfo._id}`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+
+
+            // Handle both populated object and direct ID string
+            const classData = studentProfile.data.studentClass;
+            const classId = typeof classData === 'object' ? classData?._id : classData;
+
 
             if (classId) {
                 const timetableRes = await axios.get(`${import.meta.env.VITE_API_URL}/calendar/timetable/${classId}`, {
                     headers: { Authorization: `Bearer ${userInfo.token}` }
                 });
+
                 setTimetable(timetableRes.data);
+            } else {
+
+                // Could set a specific state to show "No class assigned"
             }
             setLoading(false);
         } catch (error) {
-            console.error(error);
+            console.error('Fetch Timetable Error:', error);
+
+
+
             setLoading(false);
         }
     };
@@ -76,11 +90,12 @@ const MyTimetable = () => {
                 <div className="space-y-6">
                     {!timetable ? (
                         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-12 text-center text-gray-400">
-                            Timetable not available yet
+                            Timetable not available yet. (Ensure you are assigned to a class)
                         </div>
                     ) : (
                         days.map((day) => {
-                            const dayData = timetable.days?.find(td => td.day === day);
+                            // Robust check for day property (handle legacy 'name' if exists)
+                            const dayData = timetable.days?.find(td => (td.day || td.name) === day);
                             const isToday = day === today;
 
                             return (

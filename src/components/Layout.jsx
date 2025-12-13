@@ -59,9 +59,20 @@ const Layout = () => {
                 </header>
 
                 {/* Main Content */}
-                <div className="flex-1 p-4 md:p-8 overflow-y-auto bg-gray-50 w-full">
-                    <GoogleAd slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_GLOBAL} />
-                    <Outlet />
+                <div className="flex-1 overflow-y-auto bg-gray-50 w-full relative">
+                    {/* Global Ad: horizontal, sticky, full width, collapses if empty */}
+                    <div className="sticky top-0 z-50">
+                        <GoogleAd
+                            slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_GLOBAL}
+                            className="w-full"
+                            format="horizontal"
+                            responsive="true"
+                        />
+                    </div>
+
+                    <div className="p-4 md:p-8">
+                        <Outlet />
+                    </div>
                 </div>
             </div>
         </div>
