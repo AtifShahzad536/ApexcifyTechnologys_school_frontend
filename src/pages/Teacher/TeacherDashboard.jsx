@@ -49,12 +49,14 @@ const TeacherDashboard = () => {
 
     const fetchStats = async () => {
         try {
+            const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+
             const [subjectsRes, assignmentsRes, studentsRes, gradesRes, eventsRes] = await Promise.all([
-                axios.get(`${import.meta.env.VITE_API_URL}/subjects?teacherId=${userInfo._id}`),
-                axios.get(`${import.meta.env.VITE_API_URL}/assignments?teacherId=${userInfo._id}`),
-                axios.get(`${import.meta.env.VITE_API_URL}/students`),
-                axios.get(`${import.meta.env.VITE_API_URL}/grades`).catch(() => ({ data: [] })),
-                axios.get(`${import.meta.env.VITE_API_URL}/calendar/events`, { headers: { Authorization: `Bearer ${userInfo.token}` } }).catch(() => ({ data: [] }))
+                axios.get(`${import.meta.env.VITE_API_URL}/subjects?teacherId=${userInfo._id}`, config),
+                axios.get(`${import.meta.env.VITE_API_URL}/assignments?teacherId=${userInfo._id}`, config),
+                axios.get(`${import.meta.env.VITE_API_URL}/students`, config),
+                axios.get(`${import.meta.env.VITE_API_URL}/grades`, config).catch(() => ({ data: [] })),
+                axios.get(`${import.meta.env.VITE_API_URL}/calendar/events`, config).catch(() => ({ data: [] }))
             ]);
 
             // Filter for Online Meetings

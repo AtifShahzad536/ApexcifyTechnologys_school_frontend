@@ -191,12 +191,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     }`}
             >
                 {/* Logo Section */}
-                <div className="p-8 flex items-center justify-between">
+                <div className="h-16 flex items-center justify-between px-8 border-b border-gray-100">
                     <div className="flex items-center justify-center">
                         <div className="bg-blue-600 p-2 rounded-lg mr-3 shadow-lg shadow-blue-500/30">
-                            <FaBook className="text-xl text-white" />
+                            <FaBook className="text-lg text-white" />
                         </div>
-                        <h1 className="text-2xl font-extrabold tracking-tight text-gray-800">
+                        <h1 className="text-xl font-extrabold tracking-tight text-gray-800">
                             Edu<span className="text-blue-600">Manager</span>
                         </h1>
                     </div>
