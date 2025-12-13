@@ -144,16 +144,26 @@ const SchoolCalendar = () => {
                 updatedDays.push({ day, periods: [newPeriod] });
             }
 
+            const payloadDays = updatedDays.map(d => ({
+                ...d,
+                day: d.day || d.name, // Handle legacy 'name' property
+                periods: d.periods.map(p => ({
+                    ...p,
+                    subject: typeof p.subject === 'object' ? p.subject?._id : p.subject,
+                    teacher: typeof p.teacher === 'object' ? p.teacher?._id : p.teacher
+                }))
+            }));
+
             const { data } = await axios.post(
-                'http://localhost:5000/api/calendar/timetable',
-                { classId: selectedClass, days: updatedDays },
+                `${import.meta.env.VITE_API_URL}/calendar/timetable`,
+                { classId: selectedClass, days: payloadDays },
                 { headers: { Authorization: `Bearer ${userInfo.token}` } }
             );
             setTimetable(data);
             setSubject(''); setTeacher(''); setStartTime(''); setEndTime('');
         } catch (error) {
-            console.error(error);
-            toast.error('Error updating timetable');
+            console.error('Timetable Save Error:', error.response?.data || error.message);
+            toast.error(error.response?.data?.message || 'Error updating timetable');
         } finally {
             setLoading(false);
         }
