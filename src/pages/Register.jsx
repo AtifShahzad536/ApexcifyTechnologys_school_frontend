@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 import FloatingBackground from '../components/FloatingBackground';
 
-import GoogleAd from '../components/GoogleAd';
+
 
 const Register = () => {
     // ... existing state ...
@@ -151,9 +151,7 @@ const Register = () => {
                 </form>
             </motion.div>
 
-            <div className="w-full max-w-md z-10 mt-6">
-                <GoogleAd slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_REGISTER} />
-            </div>
+
         </div>
     );
 };

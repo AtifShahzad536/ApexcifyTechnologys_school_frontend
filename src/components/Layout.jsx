@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import { FaSignOutAlt, FaBars } from 'react-icons/fa';
-import GoogleAd from './GoogleAd';
+
 
 const Layout = () => {
     const { userInfo } = useSelector((state) => state.auth);
@@ -60,15 +60,7 @@ const Layout = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 overflow-y-auto bg-gray-50 w-full relative">
-                    {/* Global Ad: horizontal, sticky, full width, collapses if empty */}
-                    <div className="sticky top-0 z-50">
-                        <GoogleAd
-                            slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_GLOBAL}
-                            className="w-full"
-                            format="horizontal"
-                            responsive="true"
-                        />
-                    </div>
+
 
                     <div className="p-4 md:p-8">
                         <Outlet />

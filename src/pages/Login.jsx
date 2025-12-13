@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 import FloatingBackground from '../components/FloatingBackground';
-import GoogleAd from '../components/GoogleAd';
+
 
 const Login = () => {
     // ... existing state and logic ...
@@ -90,9 +90,7 @@ const Login = () => {
                 </form>
             </motion.div>
 
-            <div className="w-full max-w-md z-10 mt-6">
-                <GoogleAd slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_LOGIN} />
-            </div>
+
         </div>
     );
 };
