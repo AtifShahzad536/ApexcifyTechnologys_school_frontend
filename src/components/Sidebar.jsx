@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaHome, FaUserGraduate, FaChalkboardTeacher, FaChalkboard, FaBook, FaUserCheck, FaTrophy, FaChartLine, FaChevronDown, FaChevronRight, FaClipboardList, FaClock, FaEdit, FaFileAlt, FaCalendarAlt, FaLaptop, FaMoneyBillAlt, FaTimes, FaVideo } from 'react-icons/fa';
+import { FaHome, FaUserGraduate, FaChalkboardTeacher, FaChalkboard, FaBook, FaUserCheck, FaTrophy, FaChartLine, FaChevronDown, FaChevronRight, FaClipboardList, FaClock, FaEdit, FaFileAlt, FaCalendarAlt, FaLaptop, FaMoneyBillAlt, FaTimes, FaVideo, FaPlus } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
@@ -49,6 +49,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         Admin: [
             { path: '/admin/dashboard', label: 'Dashboard', icon: <FaHome /> },
             { path: '/admin/live-classes', label: 'Live Classes', icon: <FaVideo /> },
+            { path: '/admin/schedule-meeting', label: 'Schedule Meeting', icon: <FaPlus /> },
             {
                 path: '/admin/approvals',
                 label: 'Pending Approvals',

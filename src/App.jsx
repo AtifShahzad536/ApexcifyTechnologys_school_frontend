@@ -47,6 +47,7 @@ import ViewReports from './pages/Parent/ViewReports';
 import PaymentSuccess from './pages/Parent/PaymentSuccess';
 import LiveClass from './pages/LiveClass';
 import LiveClassesDashboard from './pages/Common/LiveClassesDashboard';
+import ScheduleMeeting from './pages/Admin/ScheduleMeeting';
 
 function App() {
   return (
@@ -67,6 +68,10 @@ function App() {
           <Route path="/admin/subjects" element={<Subjects />} />
           <Route path="/admin/reports/attendance" element={<AdminAttendanceReports />} />
           <Route path="/admin/calendar" element={<SchoolCalendar />} />
+          <Route path="/admin/leaves" element={<LeaveRequests />} />
+          <Route path="/admin/reports/attendance" element={<AdminAttendanceReports />} />
+          <Route path="/admin/calendar" element={<SchoolCalendar />} />
+          <Route path="/admin/schedule-meeting" element={<ScheduleMeeting />} />
           <Route path="/admin/leaves" element={<LeaveRequests />} />
           <Route path="/admin/fees" element={<ManageFees />} />
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />

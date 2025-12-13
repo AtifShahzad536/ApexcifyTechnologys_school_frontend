@@ -169,50 +169,57 @@ const LiveClassesDashboard = () => {
                 </div>
             )}
 
-            {/* SECTION 2: MEETINGS (All Roles) */}
-            <div>
-                <h2 className="text-xl font-bold text-gray-700 mb-4 border-l-4 border-purple-500 pl-3">
-                    Upcoming Meetings
-                </h2>
-                {meetings.length === 0 ? (
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 text-center text-gray-400 italic">
-                        No online meetings scheduled.
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {meetings.map((meeting) => (
-                            <motion.div
-                                key={meeting._id}
-                                variants={cardVariants}
-                                initial="hidden"
-                                animate="visible"
-                                className="bg-white rounded-xl shadow-md p-6 border border-gray-100 relative overflow-hidden"
-                            >
-                                <div className="absolute top-0 right-0 bg-purple-100 text-purple-700 px-3 py-1 rounded-bl-xl text-xs font-bold">
-                                    {new Date(meeting.date).toDateString()}
-                                </div>
-                                <h3 className="font-bold text-lg text-gray-800 mt-2">{meeting.title}</h3>
-                                <p className="text-sm text-gray-600 mt-1 mb-4 line-clamp-2">{meeting.description}</p>
+            {/* SECTION 2: MEETINGS (Admin/Teacher/Parent Only) */}
+            {userInfo.role !== 'Student' && (
+                <div>
+                    <h2 className="text-xl font-bold text-gray-700 mb-4 border-l-4 border-purple-500 pl-3">
+                        Upcoming Meetings
+                    </h2>
+                    {meetings.length === 0 ? (
+                        <div className="bg-white p-6 rounded-xl border border-gray-200 text-center text-gray-400 italic">
+                            No online meetings scheduled.
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {meetings.map((meeting) => (
+                                <motion.div
+                                    key={meeting._id}
+                                    variants={cardVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    className="bg-white rounded-xl shadow-md p-6 border border-gray-100 relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 right-0 bg-purple-100 text-purple-700 px-3 py-1 rounded-bl-xl text-xs font-bold">
+                                        {new Date(meeting.date).toDateString()}
+                                    </div>
+                                    <h3 className="font-bold text-lg text-gray-800 mt-2">{meeting.title}</h3>
+                                    <p className="text-sm text-gray-600 mt-1 mb-4 line-clamp-2">{meeting.description}</p>
 
-                                {meeting.meetingLink ? (
-                                    <a
-                                        href={meeting.meetingLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center"
-                                    >
-                                        <FaExternalLinkAlt className="mr-2" /> Join Meeting
-                                    </a>
-                                ) : (
-                                    <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg font-semibold cursor-not-allowed">
-                                        No Link Available
-                                    </button>
-                                )}
-                            </motion.div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                                    <div className="space-y-2">
+                                        <button
+                                            onClick={() => navigate(`/live-class/Meeting-${meeting._id}`)}
+                                            className="w-full py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center"
+                                        >
+                                            <FaVideo className="mr-2" /> Join Meeting Room
+                                        </button>
+
+                                        {meeting.meetingLink && (
+                                            <a
+                                                href={meeting.meetingLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full py-2 bg-white border border-purple-200 text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center text-sm"
+                                            >
+                                                <FaExternalLinkAlt className="mr-2" /> External Link
+                                            </a>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

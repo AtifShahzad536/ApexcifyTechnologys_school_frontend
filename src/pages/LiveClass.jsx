@@ -65,35 +65,45 @@ const LiveClass = () => {
     }, [roomId, userInfo, navigate]);
 
     return (
-        <div className="flex flex-col h-full min-h-[calc(100vh-64px)] bg-gray-50">
+        <div className="flex flex-col h-[calc(100vh-64px)] w-full bg-gray-50 overflow-hidden relative">
 
-            {/* Custom CSS to override Zego's Dark Theme */}
+            {/* Custom CSS to override Zego's Dark Theme and ensure Mobile Responsiveness */}
             <style>{`
                 .ZEGO_uikit_prebuilt_video_view_container { background-color: #f9fafb !important; }
                 .ZEGO_uikit_prebuilt_video_view_container > div { background-color: #f9fafb !important; }
-                .ZEGO_uikit_prebuilt_container { background-color: #f9fafb !important; }
-                .ZEGO_uikit_bottom_bar { background-color: white !important; box-shadow: 0 -2px 10px rgba(0,0,0,0.05) !important; border-top: 1px solid #eee !important; bottom: 0 !important; }
+                .ZEGO_uikit_prebuilt_container { 
+                    background-color: #f9fafb !important; 
+                    width: 100% !important; 
+                    height: 100% !important;
+                }
+                .ZEGO_uikit_bottom_bar { 
+                    background-color: white !important; 
+                    box-shadow: 0 -2px 10px rgba(0,0,0,0.05) !important; 
+                    border-top: 1px solid #eee !important; 
+                    bottom: 0 !important; 
+                    width: 100% !important;
+                }
                 /* Ensure video fits without cropping */
                 video { object-fit: contain !important; }
             `}</style>
 
             {/* Header within the class frame */}
-            <div className="bg-white px-6 py-2 border-b border-gray-200 flex justify-between items-center z-10 shrink-0">
-                <div className="flex items-center">
+            <div className="bg-white px-4 md:px-6 py-2 border-b border-gray-200 flex justify-between items-center z-10 shrink-0 w-full">
+                <div className="flex items-center overflow-hidden">
                     <button
                         onClick={() => navigate(-1)}
-                        className="mr-3 p-2 hover:bg-red-50 text-gray-500 hover:text-red-500 rounded-lg transition-colors"
+                        className="mr-3 p-2 hover:bg-red-50 text-gray-500 hover:text-red-500 rounded-lg transition-colors shrink-0"
                         title="Leave Class"
                     >
                         <FaArrowLeft />
                     </button>
-                    <div>
-                        <h1 className="text-lg font-bold text-gray-800">Live Classroom</h1>
+                    <div className="truncate">
+                        <h1 className="text-base md:text-lg font-bold text-gray-800 truncate">Live Classroom</h1>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 shrink-0">
                     <span className="text-xs text-gray-400 font-mono hidden md:block">ID: {roomId}</span>
-                    <div className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full animate-pulse flex items-center">
+                    <div className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full animate-pulse flex items-center whitespace-nowrap">
                         <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
                         LIVE
                     </div>
@@ -102,7 +112,7 @@ const LiveClass = () => {
 
             {/* Zego container */}
             <div
-                className="flex-1 w-full bg-gray-50 relative [&_>_div]:!w-full [&_>_div]:!h-full [&_>_div]:!bg-gray-50"
+                className="flex-1 w-full relative overflow-hidden"
                 ref={containerRef}
             />
         </div>
