@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaCalendarAlt, FaClock, FaChalkboardTeacher, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaChalkboardTeacher, FaMapMarkerAlt, FaVideo } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 const MyTimetable = () => {
     const { userInfo } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
     const [timetable, setTimetable] = useState(null);
     const [events, setEvents] = useState([]);
     const [activeTab, setActiveTab] = useState('timetable');
@@ -123,9 +125,26 @@ const MyTimetable = () => {
                                                                 {period.startTime} - {period.endTime}
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center text-sm text-gray-600 mt-2">
-                                                            <FaChalkboardTeacher className="mr-2 text-blue-500" />
-                                                            {period.teacher?.name}
+                                                        <div className="flex items-center justify-between mt-2">
+                                                            <div className="flex items-center text-sm text-gray-600">
+                                                                <FaChalkboardTeacher className="mr-2 text-blue-500" />
+                                                                {period.teacher?.name}
+                                                            </div>
+                                                            {period.isOnline && (
+                                                                <button
+                                                                    onClick={() => {
+                                                                        // Use ClassID + SubjectName to ensure consistency
+                                                                        const safeClassName = period.subject?.name.replace(/\s+/g, '') || 'Class';
+                                                                        const roomId = `EduManager-${timetable.class}-${safeClassName}`;
+                                                                        navigate(`/live-class/${roomId}`);
+                                                                    }}
+                                                                    className="flex items-center px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full hover:bg-blue-600 hover:text-white transition-all transform hover:scale-105 shadow-sm"
+                                                                    title="Join Live Class"
+                                                                >
+                                                                    <FaVideo className="mr-1" />
+                                                                    Join Live
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 ))}

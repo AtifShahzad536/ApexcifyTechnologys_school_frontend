@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.11.1",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.5.3",
+    "@zegocloud/zego-uikit-prebuilt": "^2.17.1",
     "axios": "^1.13.2",
     "chart.js": "^4.5.1",
     "framer-motion": "^12.23.26",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaHome, FaUserGraduate, FaChalkboardTeacher, FaChalkboard, FaBook, FaUserCheck, FaTrophy, FaChartLine, FaChevronDown, FaChevronRight, FaClipboardList, FaClock, FaEdit, FaFileAlt, FaCalendarAlt, FaLaptop, FaMoneyBillAlt, FaTimes } from 'react-icons/fa';
+import { FaHome, FaUserGraduate, FaChalkboardTeacher, FaChalkboard, FaBook, FaUserCheck, FaTrophy, FaChartLine, FaChevronDown, FaChevronRight, FaClipboardList, FaClock, FaEdit, FaFileAlt, FaCalendarAlt, FaLaptop, FaMoneyBillAlt, FaTimes, FaVideo } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
@@ -48,6 +48,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const navStructure = {
         Admin: [
             { path: '/admin/dashboard', label: 'Dashboard', icon: <FaHome /> },
+            { path: '/admin/live-classes', label: 'Live Classes', icon: <FaVideo /> },
             {
                 path: '/admin/approvals',
                 label: 'Pending Approvals',
@@ -94,6 +95,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ],
         Teacher: [
             { path: '/teacher/dashboard', label: 'Dashboard', icon: <FaHome /> },
+            { path: '/teacher/live-classes', label: 'Live Classes', icon: <FaVideo /> },
             { path: '/teacher/classes', label: 'My Classes', icon: <FaChalkboard /> },
             {
                 label: 'Management',
@@ -120,6 +122,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ],
         Student: [
             { path: '/student/dashboard', label: 'Dashboard', icon: <FaHome /> },
+            { path: '/student/live-classes', label: 'Live Classes', icon: <FaVideo /> },
             {
                 label: 'Course Content',
                 icon: <FaBook />,
@@ -146,6 +149,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ],
         Parent: [
             { path: '/parent/dashboard', label: 'Dashboard', icon: <FaHome /> },
+            { path: '/parent/live-classes', label: 'Live Classes', icon: <FaVideo /> },
             { path: '/parent/children', label: 'My Children', icon: <FaUserGraduate /> },
             {
                 label: 'Academic',

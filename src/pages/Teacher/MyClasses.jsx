@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaChalkboard, FaUserGraduate } from 'react-icons/fa';
+import { FaChalkboard, FaUserGraduate, FaVideo } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 const MyClasses = () => {
     const { userInfo } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
 
     useEffect(() => {
@@ -75,11 +77,23 @@ const MyClasses = () => {
                                 </p>
                             )}
 
-                            <div className="mt-4 pt-4 border-t border-gray-100">
+                            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
                                 <div className="flex items-center text-sm text-gray-500">
                                     <FaUserGraduate className="mr-2" />
                                     <span>View students & manage grades</span>
                                 </div>
+                                <button
+                                    onClick={() => {
+                                        // Use ClassID + SubjectName to ensure consistency even if SubjectIDs mismatch manually
+                                        const safeClassName = subject.name.replace(/\s+/g, '');
+                                        const roomId = `EduManager-${subject.class?._id}-${safeClassName}`;
+                                        navigate(`/live-class/${roomId}`);
+                                    }}
+                                    className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all"
+                                >
+                                    <FaVideo className="mr-2" />
+                                    Start Video Class
+                                </button>
                             </div>
                         </motion.div>
                     ))}

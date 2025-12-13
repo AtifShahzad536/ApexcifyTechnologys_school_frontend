@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaChalkboard, FaUserGraduate, FaClipboardList, FaBook } from 'react-icons/fa';
+import { FaChalkboard, FaUserGraduate, FaClipboardList, FaBook, FaVideo } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import {
     Chart as ChartJS,
@@ -39,6 +39,7 @@ const TeacherDashboard = () => {
     });
     const [subjectGrades, setSubjectGrades] = useState([]);
     const [assignmentStats, setAssignmentStats] = useState({ submitted: 0, pending: 0, graded: 0 });
+    const [meetings, setMeetings] = useState([]);
 
     useEffect(() => {
         if (userInfo?._id) {
@@ -48,12 +49,21 @@ const TeacherDashboard = () => {
 
     const fetchStats = async () => {
         try {
-            const [subjectsRes, assignmentsRes, studentsRes, gradesRes] = await Promise.all([
+            const [subjectsRes, assignmentsRes, studentsRes, gradesRes, eventsRes] = await Promise.all([
                 axios.get(`${import.meta.env.VITE_API_URL}/subjects?teacherId=${userInfo._id}`),
                 axios.get(`${import.meta.env.VITE_API_URL}/assignments?teacherId=${userInfo._id}`),
                 axios.get(`${import.meta.env.VITE_API_URL}/students`),
-                axios.get(`${import.meta.env.VITE_API_URL}/grades`).catch(() => ({ data: [] }))
+                axios.get(`${import.meta.env.VITE_API_URL}/grades`).catch(() => ({ data: [] })),
+                axios.get(`${import.meta.env.VITE_API_URL}/calendar/events`, { headers: { Authorization: `Bearer ${userInfo.token}` } }).catch(() => ({ data: [] }))
             ]);
+
+            // Filter for Online Meetings
+            const upcomingMeetings = eventsRes.data.filter(e =>
+                e.type === 'Meeting' &&
+                e.isOnline &&
+                new Date(e.date) >= new Date(new Date().setHours(0, 0, 0, 0))
+            );
+            setMeetings(upcomingMeetings);
 
             const subjects = subjectsRes.data;
             const assignments = assignmentsRes.data;
@@ -135,6 +145,38 @@ const TeacherDashboard = () => {
                 </h1>
                 <p className="text-gray-500 mt-2">Welcome back, {userInfo?.name}!</p>
             </div>
+
+            {/* Online Meetings Alert */}
+            {meetings.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-xl border border-blue-100 p-6 mb-6">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <FaVideo className="mr-2 text-red-500" />
+                        Upcoming Online Meetings
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {meetings.map(meeting => (
+                            <div key={meeting._id} className="flex items-center justify-between bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <div>
+                                    <h3 className="font-bold text-gray-800">{meeting.title}</h3>
+                                    <p className="text-sm text-gray-600">{meeting.description}</p>
+                                    <span className="text-xs font-mono bg-white px-2 py-1 rounded border border-blue-200 text-blue-600 mt-1 inline-block">
+                                        {new Date(meeting.date).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <a
+                                    href={meeting.meetingLink || '#'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center shadow-lg shadow-blue-500/30"
+                                >
+                                    <FaVideo className="mr-2" />
+                                    Join
+                                </a>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

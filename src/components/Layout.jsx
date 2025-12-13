@@ -62,7 +62,7 @@ const Layout = () => {
                 <div className="flex-1 overflow-y-auto bg-gray-50 w-full relative">
 
 
-                    <div className="p-4 md:p-8">
+                    <div className={`${location.pathname.startsWith('/live-class') ? 'p-0' : 'p-4 md:p-8'}`}>
                         <Outlet />
                     </div>
                 </div>

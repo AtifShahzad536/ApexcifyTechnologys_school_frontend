@@ -10,7 +10,8 @@ import {
     FaTrophy,
     FaBook,
     FaExclamationTriangle,
-    FaBell
+    FaBell,
+    FaVideo
 } from 'react-icons/fa';
 import {
     Chart as ChartJS,
@@ -43,37 +44,38 @@ ChartJS.register(
 const ParentDashboard = () => {
     const [children, setChildren] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedChild, setSelectedChild] = useState(null);
+    const [meetings, setMeetings] = useState([]);
 
     useEffect(() => {
-        fetchChildren();
+        fetchData();
     }, []);
 
-    useEffect(() => {
-        if (children.length > 0 && !selectedChild) {
-            setSelectedChild(children[0]);
-        }
-    }, [children]);
-
-    const fetchChildren = async () => {
+    const fetchData = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/parent/children-details`, {
-                headers: {
-                    Authorization: `Bearer ${userInfo.token}`
-                }
+
+            // 1. Fetch Children
+            const childrenRes = await axios.get(`${import.meta.env.VITE_API_URL}/parent/children-details`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
             });
 
-            // Fetch stats for each child
+            // 2. Fetch Events (Meetings)
+            const eventsRes = await axios.get(`${import.meta.env.VITE_API_URL}/calendar/events`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            const upcomingMeetings = eventsRes.data.filter(e =>
+                e.type === 'Meeting' &&
+                e.isOnline &&
+                new Date(e.date) >= new Date(new Date().setHours(0, 0, 0, 0))
+            );
+            setMeetings(upcomingMeetings);
+
+            // 3. Fetch Stats for Children
             const childrenWithStats = await Promise.all(
-                data.map(async (child) => {
+                childrenRes.data.map(async (child) => {
                     const stats = await axios.get(
-                        `http://localhost:5000/api/parents/children/${child._id}/stats`,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${userInfo.token}`
-                            }
-                        }
+                        `${import.meta.env.VITE_API_URL}/parents/children/${child._id}/stats`,
+                        { headers: { Authorization: `Bearer ${userInfo.token}` } }
                     );
                     return { ...child, stats: stats.data };
                 })
@@ -86,6 +88,12 @@ const ParentDashboard = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (children.length > 0 && !selectedChild) {
+            setSelectedChild(children[0]);
+        }
+    }, [children]);
 
     // Calculate overall stats
     const overallStats = children.reduce((acc, child) => {
@@ -241,6 +249,38 @@ const ParentDashboard = () => {
                     <p className="text-orange-100 text-sm">Assignments</p>
                 </motion.div>
             </div>
+
+            {/* Online Meetings Alert */}
+            {meetings.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-xl border border-blue-100 p-6 mb-6">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <FaVideo className="mr-2 text-red-500" />
+                        Upcoming Online Meetings
+                    </h2>
+                    <div className="grid gap-4">
+                        {meetings.map(meeting => (
+                            <div key={meeting._id} className="flex items-center justify-between bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <div>
+                                    <h3 className="font-bold text-gray-800">{meeting.title}</h3>
+                                    <p className="text-sm text-gray-600">{meeting.description}</p>
+                                    <span className="text-xs font-mono bg-white px-2 py-1 rounded border border-blue-200 text-blue-600 mt-1 inline-block">
+                                        {new Date(meeting.date).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <a
+                                    href={meeting.meetingLink || '#'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center shadow-lg shadow-blue-500/30"
+                                >
+                                    <FaVideo className="mr-2" />
+                                    Join Meeting
+                                </a>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Child Selector */}
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 mb-6">

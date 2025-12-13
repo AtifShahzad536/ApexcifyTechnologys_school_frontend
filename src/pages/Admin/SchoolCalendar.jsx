@@ -15,6 +15,8 @@ const SchoolCalendar = () => {
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [type, setType] = useState('Event');
+    const [isOnlineEvent, setIsOnlineEvent] = useState(false);
+    const [meetingLink, setMeetingLink] = useState('');
     const [loading, setLoading] = useState(false);
 
     const [activeTab, setActiveTab] = useState('events');
@@ -27,6 +29,7 @@ const SchoolCalendar = () => {
     const [teacher, setTeacher] = useState('');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
+    const [isOnlineClass, setIsOnlineClass] = useState(false);
     const [teachers, setTeachers] = useState([]);
     const [subjects, setSubjects] = useState([]);
 
@@ -97,13 +100,15 @@ const SchoolCalendar = () => {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
             await axios.post(
                 `${import.meta.env.VITE_API_URL}/calendar/events`,
-                { title, description, date, type },
+                { title, description, date, type, isOnline: isOnlineEvent, meetingLink },
                 { headers: { Authorization: `Bearer ${userInfo.token}` } }
             );
             setTitle('');
             setDescription('');
             setDate('');
             setType('Event');
+            setIsOnlineEvent(false);
+            setMeetingLink('');
             fetchEvents();
         } catch (error) {
             console.error(error);
@@ -136,7 +141,7 @@ const SchoolCalendar = () => {
             let updatedDays = [...(timetable.days || [])];
             let dayIndex = updatedDays.findIndex(d => d.day === day);
 
-            const newPeriod = { subject, teacher, startTime, endTime };
+            const newPeriod = { subject, teacher, startTime, endTime, isOnline: isOnlineClass };
 
             if (dayIndex >= 0) {
                 updatedDays[dayIndex].periods.push(newPeriod);
@@ -160,7 +165,7 @@ const SchoolCalendar = () => {
                 { headers: { Authorization: `Bearer ${userInfo.token}` } }
             );
             setTimetable(data);
-            setSubject(''); setTeacher(''); setStartTime(''); setEndTime('');
+            setSubject(''); setTeacher(''); setStartTime(''); setEndTime(''); setIsOnlineClass(false);
         } catch (error) {
             console.error('Timetable Save Error:', error.response?.data || error.message);
             toast.error(error.response?.data?.message || 'Error updating timetable');
@@ -251,6 +256,29 @@ const SchoolCalendar = () => {
                                         rows="2"
                                     />
                                 </div>
+                                <div className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={isOnlineEvent}
+                                        onChange={(e) => setIsOnlineEvent(e.target.checked)}
+                                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    />
+                                    <label className="ml-2 block text-sm font-semibold text-gray-600">
+                                        Online Meeting?
+                                    </label>
+                                </div>
+                                {isOnlineEvent && (
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-600 mb-1">Meeting Link</label>
+                                        <input
+                                            type="text"
+                                            value={meetingLink}
+                                            onChange={(e) => setMeetingLink(e.target.value)}
+                                            placeholder="https://zoom.us/j/..."
+                                            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
+                                        />
+                                    </div>
+                                )}
                                 <button
                                     type="submit"
                                     disabled={loading}
@@ -353,6 +381,17 @@ const SchoolCalendar = () => {
                                         <label className="block text-xs font-semibold text-gray-500 mb-1">End</label>
                                         <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="w-full border border-gray-300 rounded px-2 py-1" />
                                     </div>
+                                </div>
+                                <div className="flex items-center pt-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={isOnlineClass}
+                                        onChange={(e) => setIsOnlineClass(e.target.checked)}
+                                        className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    />
+                                    <label className="ml-2 block text-xs font-semibold text-gray-600">
+                                        Online Class?
+                                    </label>
                                 </div>
                                 <button
                                     onClick={handleAddPeriod}

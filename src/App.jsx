@@ -45,6 +45,8 @@ import ManageFees from './pages/Admin/ManageFees';
 import FeePayment from './pages/Parent/FeePayment';
 import ViewReports from './pages/Parent/ViewReports';
 import PaymentSuccess from './pages/Parent/PaymentSuccess';
+import LiveClass from './pages/LiveClass';
+import LiveClassesDashboard from './pages/Common/LiveClassesDashboard';
 
 function App() {
   return (
@@ -94,9 +96,13 @@ function App() {
           <Route path="/parent/grades" element={<AllGrades />} />
           <Route path="/parent/attendance" element={<AllAttendance />} />
           <Route path="/parent/assignments" element={<AllAssignments />} />
-          <Route path="/parent/reports" element={<ViewReports />} />
           <Route path="/parent/fees" element={<FeePayment />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/live-class/:roomId" element={<LiveClass />} />
+          <Route path="/admin/live-classes" element={<LiveClassesDashboard />} />
+          <Route path="/teacher/live-classes" element={<LiveClassesDashboard />} />
+          <Route path="/student/live-classes" element={<LiveClassesDashboard />} />
+          <Route path="/parent/live-classes" element={<LiveClassesDashboard />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
