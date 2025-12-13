@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 
 import FloatingBackground from '../components/FloatingBackground';
 
+import GoogleAd from '../components/GoogleAd';
+
 const Register = () => {
     // ... existing state ...
     const [name, setName] = useState('');
@@ -73,7 +75,7 @@ const Register = () => {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 animate-gradient relative overflow-hidden">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 animate-gradient relative overflow-hidden">
             <FloatingBackground />
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -148,6 +150,10 @@ const Register = () => {
                     </div>
                 </form>
             </motion.div>
+
+            <div className="w-full max-w-md z-10 mt-6">
+                <GoogleAd slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_REGISTER} />
+            </div>
         </div>
     );
 };

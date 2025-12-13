@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import { FaSignOutAlt, FaBars } from 'react-icons/fa';
+import GoogleAd from './GoogleAd';
 
 const Layout = () => {
     const { userInfo } = useSelector((state) => state.auth);
@@ -59,6 +60,7 @@ const Layout = () => {
 
                 {/* Main Content */}
                 <div className="flex-1 p-4 md:p-8 overflow-y-auto bg-gray-50 w-full">
+                    <GoogleAd slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_GLOBAL} />
                     <Outlet />
                 </div>
             </div>

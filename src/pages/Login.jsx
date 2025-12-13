@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 import FloatingBackground from '../components/FloatingBackground';
+import GoogleAd from '../components/GoogleAd';
 
 const Login = () => {
     // ... existing state and logic ...
@@ -36,7 +37,7 @@ const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50 animate-gradient relative overflow-hidden">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-50 animate-gradient relative overflow-hidden">
             <FloatingBackground />
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -88,6 +89,10 @@ const Login = () => {
                     </div>
                 </form>
             </motion.div>
+
+            <div className="w-full max-w-md z-10 mt-6">
+                <GoogleAd slot={import.meta.env.VITE_GOOGLE_ADSENSE_SLOT_ID_LOGIN} />
+            </div>
         </div>
     );
 };
