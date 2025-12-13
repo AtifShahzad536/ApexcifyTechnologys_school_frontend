@@ -93,6 +93,22 @@ const ManageUsers = () => {
         }
     };
 
+    const handleDelete = async (userId, userName) => {
+        if (!window.confirm(`Are you sure you want to delete ${userName}?`)) return;
+
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            await axios.delete(`${import.meta.env.VITE_API_URL}/approvals/users/${userId}`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            toast.success('User deleted successfully');
+            fetchUsers(); // Refresh list
+        } catch (error) {
+            const message = error.response?.data?.message || error.message;
+            toast.error(message);
+        }
+    };
+
     const getRoleConfig = (role) => {
         switch (role) {
             case 'Student':
@@ -187,12 +203,20 @@ const ManageUsers = () => {
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => openEditModal(user)}
-                                className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition"
-                            >
-                                <FaEdit /> Edit User
-                            </button>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => openEditModal(user)}
+                                    className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition"
+                                >
+                                    <FaEdit /> Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(user._id, user.name)}
+                                    className="flex-1 bg-red-500 text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-red-600 transition"
+                                >
+                                    <FaTrash /> Delete
+                                </button>
+                            </div>
                         </div>
                     );
                 })}
@@ -252,12 +276,20 @@ const ManageUsers = () => {
                                                 {user.rollNumber || <span className="text-gray-400 italic">-</span>}
                                             </td>
                                             <td className="py-3 px-4 text-center">
-                                                <button
-                                                    onClick={() => openEditModal(user)}
-                                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2 font-semibold text-sm"
-                                                >
-                                                    <FaEdit /> Edit
-                                                </button>
+                                                <div className="flex gap-2 justify-center">
+                                                    <button
+                                                        onClick={() => openEditModal(user)}
+                                                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2 font-semibold text-sm"
+                                                    >
+                                                        <FaEdit /> Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(user._id, user.name)}
+                                                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors inline-flex items-center gap-2 font-semibold text-sm"
+                                                    >
+                                                        <FaTrash /> Delete
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     );

@@ -53,6 +53,22 @@ const Teachers = () => {
         }
     };
 
+    const handleDelete = async (teacherId) => {
+        if (!window.confirm('Are you sure you want to delete this teacher?')) return;
+
+        try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            await axios.delete(`${import.meta.env.VITE_API_URL}/teachers/${teacherId}`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            toast.success('Teacher deleted successfully');
+            fetchTeachers(); // Refresh list
+        } catch (error) {
+            const message = error.response?.data?.message || error.message;
+            toast.error(message);
+        }
+    };
+
     return (
         <div className="bg-gray-50 min-h-screen">
             <div className="mb-6 flex justify-between items-center">
@@ -180,7 +196,10 @@ const Teachers = () => {
                                             <div className="bg-white p-2 rounded text-sm text-gray-600 mb-3">
                                                 Phone: <span className="font-semibold">{teacher.phone || '-'}</span>
                                             </div>
-                                            <button className="w-full text-red-500 bg-white border border-red-100 font-semibold py-2 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+                                            <button
+                                                onClick={() => handleDelete(teacher._id)}
+                                                className="w-full text-red-500 bg-white border border-red-100 font-semibold py-2 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                                            >
                                                 <FaTrash /> Remove
                                             </button>
                                         </div>
@@ -215,7 +234,10 @@ const Teachers = () => {
                                                     </span>
                                                 </td>
                                                 <td className="py-4 px-4 text-right">
-                                                    <button className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50">
+                                                    <button
+                                                        onClick={() => handleDelete(teacher._id)}
+                                                        className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
+                                                    >
                                                         <FaTrash />
                                                     </button>
                                                 </td>
